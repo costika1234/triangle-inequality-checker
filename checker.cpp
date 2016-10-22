@@ -275,8 +275,11 @@ bool check_inequality(long_d step,
                     cout << tr;
                     display_LHS_RHS(LHS, RHS);
                 }
+
                 if (stop_if_false)
                 {
+                    cout << tr;
+                    display_LHS_RHS(LHS, RHS);
                     return false;
                 }
             }
@@ -349,7 +352,7 @@ int main(int argc, const char * argv[])
 
     // Other flags.
     bool only_isosceles = false;
-    bool stop_if_false = false;
+    bool stop_if_false = true;
     bool verbose = false;
     bool print_min_max_triangles = false;
 
