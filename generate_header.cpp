@@ -260,7 +260,7 @@ string expand_cyclic_products(string inequality)
 int main(int argc, const char * argv[])
 {
     ostringstream inequality;
-    inequality << "4 * R * (K - 1) + r >= 5 * s * s / (3 * (4 * R + r))";
+    inequality << "[sum cosA2] >= s / R";
 
     string inequality_str = inequality.str();
     inequality_str = expand_cyclic_sums(inequality_str);

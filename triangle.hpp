@@ -67,8 +67,14 @@ public:
     // Double cosines.
     long_d cos2A, cos2B, cos2C;
 
+    // Triple cosines.
+    long_d cos3A, cos3B, cos3C;
+
     // Tangents.
     long_d tanA, tanB, tanC;
+
+    // Cotangents.
+    long_d cotA, cotB, cotC;
     
     // Double tangents.
     long_d tan2A, tan2B, tan2C;
@@ -105,6 +111,10 @@ public:
     void init_sin2A_sin2B_sin2C();
 
     void init_cosA_cosB_cosC();
+
+    void init_cos2A_cos2B_cos2C();
+
+    void init_cos3A_cos3B_cos3C();
     
     void init_tanA_tanB_tanC();
     
@@ -113,6 +123,8 @@ public:
     void init_cosA2_cosB2_cosC2();
     
     void init_tanA2_tanB2_tanC2();
+
+    void init_cotA2_cotB2_cotC2();
     
     tuple_3 get_trig_func_of_nA_nB_nC(trig_func func, long_d n);
     

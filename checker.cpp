@@ -127,8 +127,8 @@ void print_stats(long_d   min_angle,
              << "|" << endl
              << "|" << Color::FG_YELLOW << " (min_RHS, max_RHS) = " << "(" << min_RHS << ", " << max_RHS << ")" << Color::FG_DEFAULT << endl
              << "|" << Color::FG_YELLOW << "   🔼  Triangle which minimizes RHS: " << Color::FG_DEFAULT << endl << t_min_RHS;
-    } 
-        
+    }
+
     cout << "|" << endl
          << "| ❌ " << Color::FG_LIGHT_RED    << " failures:    " << failures       << Color::FG_DEFAULT << endl
          << "| ✅ " << Color::FG_LIGHT_GREEN  << " passes:      " << passes         << Color::FG_DEFAULT << endl
@@ -137,9 +137,13 @@ void print_stats(long_d   min_angle,
          << "|" << endl
          << "|" << Color::FG_LIGHT_CYAN << " A >= B >= 60º >= C (Bager I):   " << 100 * (long_d) bager_I_passes  / bager_I_iterations  << "%" << Color::FG_DEFAULT << endl
          << "|" << Color::FG_LIGHT_CYAN << " A >= 60º >= B >= C (Bager II):  " << 100 * (long_d) bager_II_passes / bager_II_iterations << "%" << Color::FG_DEFAULT << endl
-         << "|" << endl
-         << "|" << Color::FG_GREEN << " Holds for angles in range:     [" << min_angle_holds << "º, " << max_angle_holds << "º]" << Color::FG_DEFAULT << endl
-         << "|" << Color::FG_GREEN << " Holds for t = R / r in range:  [" << min_t           << ", "  << max_t           << "]"  << Color::FG_DEFAULT << endl
+         << "|" << endl;
+
+    set_precision(cout, LOW_PRECISION);
+    cout << "|" << Color::FG_GREEN << " Holds for angles in range:     [" << min_angle_holds << "º, " << max_angle_holds << "º]" << Color::FG_DEFAULT << endl;
+
+    set_precision(cout, VERY_LOW_PRECISION);
+    cout << "|" << Color::FG_GREEN << " Holds for t = R / r in range:  [" << min_t           << ", "  << max_t           << "]"  << Color::FG_DEFAULT << endl
          << "|" << endl
          << "|" << Color::FG_WHITE << " PASSED: " << 100 * ((long_d) (iterations - failures)) / iterations << "%" << Color::FG_DEFAULT << endl
          << "|" + underscore_str << endl
@@ -342,7 +346,7 @@ int main(int argc, const char * argv[])
     // max{A, B, C} >= phi_angle.
     long_d phi_angle = 0;
     // Iteration step. 
-    long_d step = 0.1;
+    long_d step = 0.1; 
 
     assert(min_angle <= min(phi_angle, max_angle) && phi_angle <= max_angle);
 
@@ -352,7 +356,7 @@ int main(int argc, const char * argv[])
 
     // Other flags.
     bool only_isosceles = false;
-    bool stop_if_false = true;
+    bool stop_if_false = false;
     bool verbose = false;
     bool print_min_max_triangles = false;
 

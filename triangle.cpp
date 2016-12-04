@@ -73,12 +73,36 @@ void Triangle::init_cosA_cosB_cosC()
     // Already initialized when calling constructor.
 }
 
+void Triangle::init_cos2A_cos2B_cos2C()
+{
+    auto cos2A_cos2B_cos2C = get_trig_func_of_nA_nB_nC(&cos, 2);
+    cos2A = get<0>(cos2A_cos2B_cos2C);
+    cos2B = get<1>(cos2A_cos2B_cos2C);
+    cos2C = get<2>(cos2A_cos2B_cos2C);
+}
+
+void Triangle::init_cos3A_cos3B_cos3C()
+{
+    auto cos3A_cos3B_cos3C = get_trig_func_of_nA_nB_nC(&cos, 3);
+    cos3A = get<0>(cos3A_cos3B_cos3C);
+    cos3B = get<1>(cos3A_cos3B_cos3C);
+    cos3C = get<2>(cos3A_cos3B_cos3C);
+}
+
 void Triangle::init_tanA_tanB_tanC()
 {
     auto tanA_tanB_tanC = get_trig_func_of_nA_nB_nC(&tan, 1);
     tanA = get<0>(tanA_tanB_tanC);
     tanB = get<1>(tanA_tanB_tanC);
     tanC = get<2>(tanA_tanB_tanC);
+}
+
+void Triangle::init_cotA2_cotB2_cotC2()
+{
+    init_sinA_sinB_sinC();
+    cotA = cosA / sinA;
+    cotB = cosB / sinB;
+    cotC = cosC / sinC;
 }
 
 void Triangle::init_sinA2_sinB2_sinC2()
