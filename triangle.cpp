@@ -13,18 +13,25 @@ Triangle::Triangle(long_d _a, long_d _b, long_d _c)
     init_angles();
     init_Rrs();
 }
-    
+
+void Triangle::update_sides(long_d _a, long_d _b, long_d _c)
+{
+    a = _a; b = _b; c = _c;
+    init_angles();
+    init_Rrs();
+}
+
 void Triangle::init_angles()
 {
     cosA = (b * b + c * c - a * a) / (2 * b * c);
     cosB = (c * c + a * a - b * b) / (2 * c * a);
     cosC = (a * a + b * b - c * c) / (2 * a * b);
-        
+
     A = acos(cosA) * 180 / M_PI;
     B = acos(cosB) * 180 / M_PI;
     C = acos(cosC) * 180 / M_PI;
 }
-    
+
 void Triangle::init_Rrs()
 {
     s = (a + b + c) / 2;
@@ -135,7 +142,7 @@ tuple_3 Triangle::get_trig_func_of_nA_nB_nC(trig_func func, long_d n)
     long_d func_nA = func(A * angle_ct);
     long_d func_nB = func(B * angle_ct);
     long_d func_nC = func(C * angle_ct);
-    
+
     return tuple<long_d ,long_d, long_d>(func_nA, func_nB, func_nC);
 }
 

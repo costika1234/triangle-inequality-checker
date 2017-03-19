@@ -6,41 +6,48 @@
 #include <vector>
 #include <cfloat>
 #include <assert.h>
+#include <set>
+#include <map>
+#include <cstdio>
+#include <string>
+#include <boost/lexical_cast.hpp>
 
-#include "inequality.h"
 #include "triangle.hpp"
-#include "utils.h"
+#include "triangle_info.hpp"
+#include "expressions.hpp"
 
 #define VERY_LOW_PRECISION  5
 #define LOW_PRECISION      15
 #define HIGH_PRECISION     30
 #define NO_ITERATIONS      20
 
+#define CALL_MEMBER_FN(object, ptrToMember)  ((object).*(ptrToMember))
+
 using namespace std;
-    
-namespace Color 
+
+namespace Color
 {
-    enum Code 
+    enum Code
     {
         FG_RED           = 31,
         FG_GREEN         = 32,
         FG_YELLOW        = 33,
         FG_BLUE          = 34,
-        FG_MAGENTA       = 35, 
-        FG_CYAN          = 36, 
+        FG_MAGENTA       = 35,
+        FG_CYAN          = 36,
         FG_LIGHT_GRAY    = 37,
-        FG_DEFAULT       = 39, 
-        FG_DARK_GRAY     = 90, 
-        FG_LIGHT_RED     = 91, 
-        FG_LIGHT_GREEN   = 92, 
-        FG_LIGHT_YELLOW  = 93, 
-        FG_LIGHT_BLUE    = 94, 
-        FG_LIGHT_MAGENTA = 95, 
-        FG_LIGHT_CYAN    = 96, 
+        FG_DEFAULT       = 39,
+        FG_DARK_GRAY     = 90,
+        FG_LIGHT_RED     = 91,
+        FG_LIGHT_GREEN   = 92,
+        FG_LIGHT_YELLOW  = 93,
+        FG_LIGHT_BLUE    = 94,
+        FG_LIGHT_MAGENTA = 95,
+        FG_LIGHT_CYAN    = 96,
         FG_WHITE         = 97
     };
 
-    std::ostream& operator<<(std::ostream& os, Code code) 
+    std::ostream& operator<<(std::ostream& os, Code code)
     {
         return os << "\033[" << static_cast<int>(code) << "m";
     }
@@ -83,7 +90,9 @@ void display_LHS_RHS(long_d LHS,
     cout << "(LHS: " << LHS << ", RHS: " << RHS << ") " << ineq_holds_str << endl << endl;
 }
 
-void print_stats(long_d   min_angle,
+void print_stats(string   LHS_str,
+                 string   RHS_str,
+                 long_d   min_angle,
                  long_d   max_angle,
                  long_d   phi_angle,
                  long_d   min_LHS,
@@ -118,7 +127,7 @@ void print_stats(long_d   min_angle,
          << "|" << endl
          << "|" << Color::FG_LIGHT_MAGENTA << " Subject to:          " << Color::FG_WHITE << min_angle << " <= A, B, C <= " << max_angle << Color::FG_DEFAULT << endl
          << "|"                            << "                      " << Color::FG_WHITE << "max{A, B, C} >= " << phi_angle << Color::FG_DEFAULT << endl;
-    
+
     if (print_min_max_triangles)
     {
         cout << "|" << endl
@@ -150,23 +159,63 @@ void print_stats(long_d   min_angle,
          << bold_off;
 }
 
-// General purpose inequality checker.
-bool check_inequality(long_d step,
-                      long_d min_angle,
-                      long_d max_angle,
-                      long_d phi_angle,
-                      bool   check_for_bager_I,
-                      bool   check_for_bager_II,
-                      bool   only_isosceles,
-                      bool   stop_if_false,
-                      bool   verbose,
-                      bool   print_min_max_triangles)
+void init_exprtk_parser(const string& inequality_side,
+                        expression_t& expression,
+                        TrElemPtrMap tr_elem_ptr_map)
 {
+    symbol_table_t symbol_table;
+    parser_t       parser;
+
+    set<string> vars = get_vars_from_expression(inequality_side);
+
+    for (auto& var : vars) {
+         symbol_table.add_variable(var, *tr_elem_ptr_map[var].first);
+    }
+
+    expression.register_symbol_table(symbol_table);
+    parser.compile(inequality_side, expression);
+}
+
+bool check_inequality(string&       inequality,
+                      const long_d  step,
+                      const long_d  min_angle,
+                      const long_d  max_angle,
+                      const long_d  phi_angle,
+                      const bool    check_for_bager_I,
+                      const bool    check_for_bager_II,
+                      const bool    only_isosceles,
+                      const bool    stop_if_false,
+                      const bool    verbose,
+                      const bool    print_min_max_triangles)
+{
+    expand_cyclic_sums(inequality);
+    expand_cyclic_products(inequality);
+
+    auto sides = parse_inequality(inequality);
+    string LHS_str = get<0>(sides);
+    string RHS_str = get<1>(sides);
+    auto all_vars = get_vars_from_inequality(LHS_str, RHS_str);
+
+    Triangle tr = Triangle(1, 1, 1);
+    TriangleInfo tr_info(&tr);
+
+    TrFuncPtrVec required_init_funcs;
+    TrElemPtrMap tr_elem_ptr_map = tr_info.get_tr_elem_ptr_map();
+
+    for (auto& var : all_vars)
+    {
+        required_init_funcs.push_back(tr_func_ptr_map[tr_elem_ptr_map[var].second]);
+    }
+
+    expression_t expression_lhs, expression_rhs;
+    init_exprtk_parser(LHS_str, expression_lhs, tr_elem_ptr_map);
+    init_exprtk_parser(RHS_str, expression_rhs, tr_elem_ptr_map);
+
     // Without loss of generality, set a = 100;
     long_d a = 100.0;
     long_d b = 0.0;
     long_d c = 0.0;
-    
+
     int iterations = 0;
     int passes = 0;
     int failures = 0;
@@ -181,7 +230,7 @@ bool check_inequality(long_d step,
     bool holds = true;
     Triangle tr_max_LHS(0, 0, 0);
     Triangle tr_min_RHS(0, 0, 0);
-    
+
     for (b = 0; b <= 1000; b += step)
     {
         for (c = 0; c <= 1000; c += step)
@@ -195,8 +244,8 @@ bool check_inequality(long_d step,
             {
                 continue;
             }
-            
-            Triangle tr(a, b, c);
+
+            tr.update_sides(a, b, c);
 
             if (check_for_bager_I && !tr.is_bager_type_I())
             {
@@ -208,35 +257,40 @@ bool check_inequality(long_d step,
                 continue;
             }
 
-            if (!(tr.get_min_angle() >= min_angle && 
-                  tr.get_max_angle() <= max_angle && 
+            if (!(tr.get_min_angle() >= min_angle &&
+                  tr.get_max_angle() <= max_angle &&
                   tr.get_max_angle() >= phi_angle))
             {
                 continue;
             }
-            
-            INIT_VARS;
+
+            // Call only the necessary methods to initialize the triangle elements.
+            for (auto& init_func : required_init_funcs)
+            {
+                CALL_MEMBER_FN(tr, init_func) ();
+            }
+
             long_d t = tr.R / tr.r;
-            long_d LHS = LHS_expr;
-            long_d RHS = RHS_expr;
-            
+            long_d LHS = expression_lhs.value();
+            long_d RHS = expression_rhs.value();
+
             min_LHS = min(min_LHS, LHS);
             max_RHS = max(max_RHS, RHS);
-            
+
             // Record the triangle for which max_LHS is attained.
             if (LHS > max_LHS)
             {
                 max_LHS = LHS;
                 tr_max_LHS = Triangle(a, b, c);
             }
-            
+
             // Record the triangle for which min_RHS is attained.
             if (RHS < min_RHS)
             {
                 min_RHS = RHS;
                 tr_min_RHS = Triangle(a, b, c);
             }
-            
+
             // Count iterations.
             iterations++;
             bool is_bager_type_I = tr.is_bager_type_I();
@@ -249,7 +303,7 @@ bool check_inequality(long_d step,
             {
                 bager_II_iterations++;
             }
-            
+
             if (LHS > RHS)
             {
                 if (almost_equal_relative(LHS, RHS))
@@ -273,7 +327,7 @@ bool check_inequality(long_d step,
                 max_angle_holds = min(max_angle_holds, tr.get_max_angle());
                 holds = false;
                 failures++;
-                
+
                 if (verbose)
                 {
                     cout << tr;
@@ -311,7 +365,9 @@ bool check_inequality(long_d step,
         }
     }
 
-    print_stats(min_angle,
+    print_stats(LHS_str,
+                RHS_str,
+                min_angle,
                 max_angle,
                 phi_angle,
                 min_LHS,
@@ -333,34 +389,38 @@ bool check_inequality(long_d step,
                 min_t,
                 max_t,
                 print_min_max_triangles);
-    
+
     return holds;
 }
 
 int main(int argc, const char * argv[])
 {
+    // Input inequality.
+    string inequality = "[sum ha] <= [sum ma]";
+
     // min{A, B, C} >= min_angle.
-    long_d min_angle = 0;
+    const long_d min_angle = 0;
     // max{A, B, C} <= max_angle.
-    long_d max_angle = 180;
+    const long_d max_angle = 180;
     // max{A, B, C} >= phi_angle.
-    long_d phi_angle = 0;
-    // Iteration step. 
-    long_d step = 0.1; 
+    const long_d phi_angle = 0;
+    // Iteration step.
+    const long_d step = boost::lexical_cast<long_d>(argv[1]);
 
     assert(min_angle <= min(phi_angle, max_angle) && phi_angle <= max_angle);
 
     // Must not be both set to 'true'.
-    bool check_for_bager_I = false;
-    bool check_for_bager_II = false;
+    const bool check_for_bager_I = false;
+    const bool check_for_bager_II = false;
 
     // Other flags.
-    bool only_isosceles = false;
-    bool stop_if_false = false;
-    bool verbose = false;
-    bool print_min_max_triangles = false;
+    const bool only_isosceles = false;
+    const bool stop_if_false = false;
+    const bool verbose = true;
+    const bool print_min_max_triangles = false;
 
-    check_inequality(step,
+    check_inequality(inequality,
+                     step,
                      min_angle,
                      max_angle,
                      phi_angle,

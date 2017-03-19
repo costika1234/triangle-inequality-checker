@@ -1,16 +1,13 @@
-run: clean generate_header checker
+boost_version = 1.63.0
 
-checker:
-	clang++ -std=c++11 checker.cpp triangle.cpp -o checker
-	time ./checker
+build: clean main
 
-generate_header:
-	clang++ -std=c++11 -I/usr/local/Cellar/boost/1.61.0/include -L/usr/local/Cellar/boost/1.61.0/lib -lboost_system -lboost_regex generate_header.cpp -o generate_header
-	./generate_header
+main:
+	clang++ -std=c++11 -I/usr/local/Cellar/boost/$(boost_version)/include -L/usr/local/Cellar/boost/$(boost_version)/lib -lboost_system -lboost_regex main.cpp triangle.cpp -o main
 
 clean:
 	rm -rf .o
-	rm -rf generate_header
+	rm -rf main
 	rm -rf checker
-	rm -rf plot
+	rm -rf triangle
 

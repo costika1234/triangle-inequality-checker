@@ -21,7 +21,6 @@
 #define SUM_SIDES_2      "a * a + b * b + c * c"
 #define SUM_SIDES_3      "a * a * a + b * b * b + c * c * c"
 #define SUM_SIDES_4      "a * a * a * a + b * b * b * b + c * c * c * c"
-#define t                "R / r"
 #define IRAN_96          "(a * b + b * c + c * a) * (1 / ((a + b) * (a + b)) + 1 / ((b + c) * (b + c)) + 1 / ((c + a) * (c + a)))"
 
 #endif /* expressions_h */
