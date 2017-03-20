@@ -9,9 +9,7 @@
 
 Triangle::Triangle(long_d _a, long_d _b, long_d _c)
 {
-    a = _a; b = _b; c = _c;
-    init_angles();
-    init_Rrs();
+    update_sides(_a, _b, _c);
 }
 
 void Triangle::update_sides(long_d _a, long_d _b, long_d _c)
@@ -19,6 +17,11 @@ void Triangle::update_sides(long_d _a, long_d _b, long_d _c)
     a = _a; b = _b; c = _c;
     init_angles();
     init_Rrs();
+}
+
+void Triangle::dummy_update_sides()
+{
+
 }
 
 void Triangle::init_angles()
@@ -218,4 +221,3 @@ void Triangle::init_GA_GB_GC()
     GB = (2.0 * mb) / ((long_d) 3);
     GC = (2.0 * mc) / ((long_d) 3);
 }
-

@@ -99,6 +99,8 @@ public:
 
     void update_sides(long_d _a, long_d _b, long_d _c);
 
+    void dummy_update_sides();
+
     void init_angles();
 
     void init_Rrs();

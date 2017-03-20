@@ -169,7 +169,7 @@ void init_exprtk_parser(const string& inequality_side,
     set<string> vars = get_vars_from_expression(inequality_side);
 
     for (auto& var : vars) {
-         symbol_table.add_variable(var, *tr_elem_ptr_map[var].first);
+        symbol_table.add_variable(var, *tr_elem_ptr_map[var].first);
     }
 
     expression.register_symbol_table(symbol_table);
@@ -200,11 +200,22 @@ bool check_inequality(string&       inequality,
     TriangleInfo tr_info(&tr);
 
     TrFuncPtrVec required_init_funcs;
+    set<int> func_indices;
     TrElemPtrMap tr_elem_ptr_map = tr_info.get_tr_elem_ptr_map();
 
     for (auto& var : all_vars)
     {
-        required_init_funcs.push_back(tr_func_ptr_map[tr_elem_ptr_map[var].second]);
+        func_indices.insert(tr_elem_ptr_map[var].second);
+    }
+
+    for (auto& index : func_indices)
+    {
+        // Skip the dummy update method.
+        if (index == 0)
+        {
+            continue;
+        }
+        required_init_funcs.push_back(tr_func_ptr_vec[index]);
     }
 
     expression_t expression_lhs, expression_rhs;
@@ -396,16 +407,22 @@ bool check_inequality(string&       inequality,
 int main(int argc, const char * argv[])
 {
     // Input inequality.
-    string inequality = "[sum ha] <= [sum ma]";
+    string inequality;
+    ifstream f("inequality.txt");
+    getline(f, inequality);
+    f.close();
 
     // min{A, B, C} >= min_angle.
-    const long_d min_angle = 0;
+    const long_d min_angle = boost::lexical_cast<long_d>(argv[1]);
+
     // max{A, B, C} <= max_angle.
-    const long_d max_angle = 180;
+    const long_d max_angle = boost::lexical_cast<long_d>(argv[2]);
+
     // max{A, B, C} >= phi_angle.
-    const long_d phi_angle = 0;
+    const long_d phi_angle = boost::lexical_cast<long_d>(argv[3]);
+
     // Iteration step.
-    const long_d step = boost::lexical_cast<long_d>(argv[1]);
+    const long_d step = boost::lexical_cast<long_d>(argv[4]);
 
     assert(min_angle <= min(phi_angle, max_angle) && phi_angle <= max_angle);
 
@@ -416,7 +433,7 @@ int main(int argc, const char * argv[])
     // Other flags.
     const bool only_isosceles = false;
     const bool stop_if_false = false;
-    const bool verbose = true;
+    const bool verbose = false;
     const bool print_min_max_triangles = false;
 
     check_inequality(inequality,
