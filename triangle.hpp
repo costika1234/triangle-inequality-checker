@@ -129,6 +129,8 @@ public:
 
     void init_tanA2_tanB2_tanC2();
 
+    void init_tanA4_tanB4_tanC4();
+
     void init_cotA2_cotB2_cotC2();
 
     tuple_3 get_trig_func_of_nA_nB_nC(trig_func func, long_d n);

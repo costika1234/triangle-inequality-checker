@@ -139,6 +139,14 @@ void Triangle::init_tanA2_tanB2_tanC2()
     tanC2 = get<2>(tanA2_tanB2_tanC2);
 }
 
+void Triangle::init_tanA4_tanB4_tanC4()
+{
+    auto tanA4_tanB4_tanC4 = get_trig_func_of_nA_nB_nC(&tan, 0.25);
+    tanA4 = get<0>(tanA4_tanB4_tanC4);
+    tanB4 = get<1>(tanA4_tanB4_tanC4);
+    tanC4 = get<2>(tanA4_tanB4_tanC4);
+}
+
 tuple_3 Triangle::get_trig_func_of_nA_nB_nC(trig_func func, long_d n)
 {
     long_d angle_ct = n * M_PI / 180;
