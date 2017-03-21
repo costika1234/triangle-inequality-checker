@@ -1,1 +1,1 @@
-0.5 + sqrt(1 - sqrt(1 - 2 * r / R)) + 0.5 * sqrt(1 - 2 * r / R) <= K
+[sum ma * ha / la] <= [sum ra]

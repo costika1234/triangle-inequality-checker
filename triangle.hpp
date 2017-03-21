@@ -62,6 +62,9 @@ public:
     // Double sines.
     long_d sin2A, sin2B, sin2C;
 
+    // Triple sines.
+    long_d sin3A, sin3B, sin3C;
+
     // Cosines.
     long_d cosA, cosB, cosC;
 
@@ -115,6 +118,8 @@ public:
 
     void init_sin2A_sin2B_sin2C();
 
+    void init_sin3A_sin3B_sin3C();
+
     void init_cosA_cosB_cosC();
 
     void init_cos2A_cos2B_cos2C();
@@ -130,8 +135,6 @@ public:
     void init_tanA2_tanB2_tanC2();
 
     void init_tanA4_tanB4_tanC4();
-
-    void init_cotA2_cotB2_cotC2();
 
     tuple_3 get_trig_func_of_nA_nB_nC(trig_func func, long_d n);
 

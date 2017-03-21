@@ -78,6 +78,14 @@ void Triangle::init_sin2A_sin2B_sin2C()
     sin2C = get<2>(sin2A_sin2B_sin2C);
 }
 
+void Triangle::init_sin3A_sin3B_sin3C()
+{
+    auto sin3A_sin3B_sin3C = get_trig_func_of_nA_nB_nC(&sin, 3);
+    sin3A = get<0>(sin3A_sin3B_sin3C);
+    sin3B = get<1>(sin3A_sin3B_sin3C);
+    sin3C = get<2>(sin3A_sin3B_sin3C);
+}
+
 void Triangle::init_cosA_cosB_cosC()
 {
     // Already initialized when calling constructor.
@@ -105,14 +113,6 @@ void Triangle::init_tanA_tanB_tanC()
     tanA = get<0>(tanA_tanB_tanC);
     tanB = get<1>(tanA_tanB_tanC);
     tanC = get<2>(tanA_tanB_tanC);
-}
-
-void Triangle::init_cotA2_cotB2_cotC2()
-{
-    init_sinA_sinB_sinC();
-    cotA = cosA / sinA;
-    cotB = cosB / sinB;
-    cotC = cosC / sinC;
 }
 
 void Triangle::init_sinA2_sinB2_sinC2()

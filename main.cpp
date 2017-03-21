@@ -18,7 +18,6 @@
 #define VERY_LOW_PRECISION  5
 #define LOW_PRECISION      15
 #define HIGH_PRECISION     30
-#define NO_ITERATIONS      20
 
 #define CALL_MEMBER_FN(object, ptrToMember)  ((object).*(ptrToMember))
 
