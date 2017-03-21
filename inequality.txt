@@ -1,1 +1,1 @@
-s * s <= 2 * R * R + 11 * R * r - 3 * r * r
+8 * R * [prod ma] >= [sum b * b * c * c]

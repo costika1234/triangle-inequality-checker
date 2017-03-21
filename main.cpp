@@ -12,7 +12,6 @@
 #include <string>
 #include <boost/lexical_cast.hpp>
 
-#include "triangle.hpp"
 #include "triangle_info.hpp"
 #include "expressions.hpp"
 
@@ -159,9 +158,9 @@ void print_stats(string   LHS_str,
          << bold_off;
 }
 
-void init_exprtk_parser(const string& inequality_side,
+void init_exprtk_parser(string        inequality_side,
                         expression_t& expression,
-                        TrElemPtrMap tr_elem_ptr_map)
+                        TrElemPtrMap& tr_elem_ptr_map)
 {
     symbol_table_t symbol_table;
     parser_t       parser;
@@ -169,11 +168,22 @@ void init_exprtk_parser(const string& inequality_side,
     set<string> vars = get_vars_from_expression(inequality_side);
 
     for (auto& var : vars) {
-        symbol_table.add_variable(var, *tr_elem_ptr_map[var].first);
+        string alias_var = var;
+        // If the variable has an alias, use it.
+        if (elem_alias_map.find(var) != elem_alias_map.end())
+        {
+            alias_var = elem_alias_map[var];
+        }
+        symbol_table.add_variable(alias_var, *tr_elem_ptr_map[var].first);
     }
 
     expression.register_symbol_table(symbol_table);
-    parser.compile(inequality_side, expression);
+
+    // Before compiling the expression, replace all occurences of variables which
+    // require aliases to prevent case sensitive clashes.
+    string inequality_side_with_aliases = replace_vars_with_aliases(inequality_side);
+
+    parser.compile(inequality_side_with_aliases, expression);
 }
 
 bool check_inequality(string&       inequality,
@@ -315,6 +325,12 @@ bool check_inequality(string&       inequality,
                 bager_II_iterations++;
             }
 
+            if (verbose)
+            {
+                cout << tr;
+                display_LHS_RHS(LHS, RHS);
+            }
+
             if (LHS > RHS)
             {
                 if (almost_equal_relative(LHS, RHS))
@@ -338,12 +354,6 @@ bool check_inequality(string&       inequality,
                 max_angle_holds = min(max_angle_holds, tr.get_max_angle());
                 holds = false;
                 failures++;
-
-                if (verbose)
-                {
-                    cout << tr;
-                    display_LHS_RHS(LHS, RHS);
-                }
 
                 if (stop_if_false)
                 {
@@ -422,7 +432,7 @@ int main(int argc, const char * argv[])
     const long_d phi_angle = boost::lexical_cast<long_d>(argv[3]);
 
     // Iteration step.
-    const long_d step = boost::lexical_cast<long_d>(argv[4]);
+    const long_d step = 0.1;
 
     assert(min_angle <= min(phi_angle, max_angle) && phi_angle <= max_angle);
 

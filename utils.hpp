@@ -6,8 +6,9 @@
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/regex.hpp>
 #include <regex>
-#include <unordered_map>
+
 #include "exprtk.hpp"
+#include "aliases.hpp"
 
 typedef long double long_d;
 typedef exprtk::symbol_table<long_d> symbol_table_t;
@@ -185,6 +186,62 @@ static void expand_cyclic_products(string& inequality)
     inequality = boost::regex_replace(inequality,
                                 boost::regex(REGEX_CYCLIC_PROD),
                                 &build_cyclic_expr);
+}
+
+static std::string replace_vars_with_aliases(const string& expr)
+{
+    unordered_map<string, string> elem_alias_map =
+        {
+            { "R",  "circumradius"  },
+            { "r",  "inradius"      },
+            { "s",  "semiperimeter" },
+            { "S",  "area"          },
+            { "A",  "angleA"        },
+            { "B",  "angleB"        },
+            { "C",  "angleC"        },
+            { "ha", "heightA"       },
+            { "hb", "heightB"       },
+            { "hc", "heightC"       }
+        };
+
+    ostringstream result;
+    vector<pair<int, string>> matches;
+
+    regex words_regex(REGEX_TRIANGLE_VAR);
+    auto words_begin = sregex_iterator(expr.begin(), expr.end(), words_regex);
+    auto words_end   = sregex_iterator();
+
+    for (sregex_iterator it = words_begin; it != words_end; ++it)
+    {
+        smatch match = *it;
+        string match_str = match.str();
+        matches.push_back({ it->position(), match_str });
+    }
+
+    int pos = 0, m_idx = 0;
+
+    for ( ; m_idx < matches.size(); ++m_idx)
+    {
+        result << expr.substr(pos, matches[m_idx].first - pos);
+
+        // Append either the expression variable or its alias (via map lookup).
+        if (elem_alias_map.find(matches[m_idx].second) == elem_alias_map.end())
+        {
+            result << matches[m_idx].second;
+        }
+        else
+        {
+            result << elem_alias_map[matches[m_idx].second];
+        }
+
+        // The next position from which we copy characters on the next iteration.
+        pos = matches[m_idx].first + matches[m_idx].second.size();
+    }
+
+    // Copy the remaining characters (if any).
+    result << expr.substr(pos, expr.size() - pos);
+
+    return result.str();
 }
 
 #endif /* utils_h */

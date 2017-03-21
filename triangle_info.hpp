@@ -1,17 +1,23 @@
+#ifndef triangle_hpp
+#define triangle_info
+
 #include "triangle.hpp"
+
+using namespace std;
 
 typedef void (Triangle::*TrMemberFuncPtr)();
 typedef unordered_map<string, pair<long_d*, int>> TrElemPtrMap;
-typedef vector<TrMemberFuncPtr> TrFuncPtrVec;
+typedef vector<TrMemberFuncPtr>                   TrFuncPtrVec;
 
-TrFuncPtrVec tr_func_ptr_vec = {
-    &Triangle::dummy_update_sides,
-    &Triangle::init_ha_hb_hc,
-    &Triangle::init_la_lb_lc,
-    &Triangle::init_ma_mb_mc,
-    &Triangle::init_sa_sb_sc,
-    &Triangle::init_ra_rb_rc
-};
+TrFuncPtrVec tr_func_ptr_vec =
+    {
+        &Triangle::dummy_update_sides,
+        &Triangle::init_ha_hb_hc,
+        &Triangle::init_la_lb_lc,
+        &Triangle::init_ma_mb_mc,
+        &Triangle::init_sa_sb_sc,
+        &Triangle::init_ra_rb_rc
+    };
 
 class TriangleInfo
 {
@@ -63,3 +69,5 @@ public:
         };
     }
 };
+
+#endif /* triangle_info */
