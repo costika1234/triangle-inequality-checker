@@ -159,4 +159,6 @@ public:
     void init_GA_GB_GC();
 };
 
+ostream& operator<<(ostream& os, const Triangle& tr);
+
 #endif /* triangle_hpp */

@@ -9,11 +9,6 @@ typedef void (Triangle::*TrMemberFuncPtr)();
 typedef unordered_map<string, pair<long_d*, int>> TrElemPtrMap;
 typedef vector<TrMemberFuncPtr>                   TrFuncPtrVec;
 
-TrFuncPtrVec tr_func_ptr_vec =
-    {
-        __POINTERS_TO_MEMBER_FUNCTIONS__
-    };
-
 class TriangleInfo
 {
 private:
@@ -23,6 +18,13 @@ public:
     TriangleInfo(Triangle * const _tr)
     {
         tr = _tr;
+    }
+
+    TrFuncPtrVec get_tr_func_ptr_vec()
+    {
+        return {
+            __POINTERS_TO_MEMBER_FUNCTIONS__
+        };
     }
 
     TrElemPtrMap get_tr_elem_ptr_map()

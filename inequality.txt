@@ -1,1 +1,1 @@
-[sum ma * ha / la] <= [sum ra]
+[sum (ma * ha) / la] <= [sum ra]

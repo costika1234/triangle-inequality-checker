@@ -1,5 +1,5 @@
-#ifndef utils_h
-#define utils_h
+#ifndef utils_hpp
+#define utils_hpp
 
 #include <stdio.h>
 #include <cmath>
@@ -244,4 +244,4 @@ static std::string replace_vars_with_aliases(const string& expr)
     return result.str();
 }
 
-#endif /* utils_h */
+#endif /* utils_hpp */

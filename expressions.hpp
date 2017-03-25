@@ -1,12 +1,7 @@
 #ifndef expressions_h
 #define expressions_h
 
-#define VERY_LOW_PRECISION  5
-#define LOW_PRECISION      15
-#define HIGH_PRECISION     30
-#define NO_ITERATIONS      20
-
-// Convenient expressions.
+// Common useful expressions.
 #define BLUNDON_LEFT     "2 * R * R + 10 * R * r - r * r - sqrt(4 * R * (R - 2 * r) * (R - 2 * r) * (R - 2 * r))"
 #define BLUNDON_RIGHT    "2 * R * R + 10 * R * r - r * r + sqrt(4 * R * (R - 2 * r) * (R - 2 * r) * (R - 2 * r))"
 #define WALKER           "2 * R * R + 8 * R * r + 3 * r * r"

@@ -8,8 +8,7 @@
 
 using namespace std;
 
-static string INDENT2 = string(8, ' ');
-static string INDENT3 = string(12, ' ');
+static string INDENT = string(12, ' ');
 static string MEMBER_FUNC_PTR_KEY = "__POINTERS_TO_MEMBER_FUNCTIONS__";
 static string TRIANGLE_ELEM_MAP_KEY = "__MAP_OF_TRIANGLE_ELEMENTS_TO_POINTERS__";
 static string REGEX_INIT_FUNCTIONS = "void init_(.*)\\(\\);";
@@ -24,7 +23,7 @@ string get_triangle_elem_key_value(const string& elem,
 
     if (format)
     {
-        triangle_elem_key_value << "," << endl << INDENT3;
+        triangle_elem_key_value << "," << endl << INDENT;
     }
 
     return triangle_elem_key_value.str();
@@ -50,7 +49,7 @@ pair<string, string> generate_triangle_info()
                 continue;
             }
 
-            func_ptrs << "&Triangle::init_" + match_str.str() + "," << endl << INDENT2;
+            func_ptrs << "&Triangle::init_" + match_str.str() + "," << endl << INDENT;
 
             string var;
             while(getline(match_str, var, DELIMITER))
@@ -58,7 +57,7 @@ pair<string, string> generate_triangle_info()
                 member_elems_map << get_triangle_elem_key_value(var, pos);
             }
 
-            member_elems_map << endl << INDENT3;
+            member_elems_map << endl << INDENT;
             ++pos;
         }
     }

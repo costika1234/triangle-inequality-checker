@@ -229,3 +229,10 @@ void Triangle::init_GA_GB_GC()
     GB = (2.0 * mb) / ((long_d) 3);
     GC = (2.0 * mc) / ((long_d) 3);
 }
+
+ostream& operator<<(ostream& os, const Triangle& tr)
+{
+    os << "|     Angles: (" << tr.A << "º, " << tr.B << "º, " << tr.C << "º)" << endl
+       << "|     Sides:  (" << tr.a << ", "  << tr.b << ", "  << tr.c << ")"  << endl;
+    return os;
+}

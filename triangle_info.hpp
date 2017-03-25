@@ -9,32 +9,6 @@ typedef void (Triangle::*TrMemberFuncPtr)();
 typedef unordered_map<string, pair<long_d*, int>> TrElemPtrMap;
 typedef vector<TrMemberFuncPtr>                   TrFuncPtrVec;
 
-TrFuncPtrVec tr_func_ptr_vec =
-    {
-        &Triangle::init_sinA_sinB_sinC,
-        &Triangle::init_sin2A_sin2B_sin2C,
-        &Triangle::init_sin3A_sin3B_sin3C,
-        &Triangle::init_cosA_cosB_cosC,
-        &Triangle::init_cos2A_cos2B_cos2C,
-        &Triangle::init_cos3A_cos3B_cos3C,
-        &Triangle::init_tanA_tanB_tanC,
-        &Triangle::init_sinA2_sinB2_sinC2,
-        &Triangle::init_cosA2_cosB2_cosC2,
-        &Triangle::init_tanA2_tanB2_tanC2,
-        &Triangle::init_tanA4_tanB4_tanC4,
-        &Triangle::init_K,
-        &Triangle::init_Q,
-        &Triangle::init_ha_hb_hc,
-        &Triangle::init_la_lb_lc,
-        &Triangle::init_ma_mb_mc,
-        &Triangle::init_sa_sb_sc,
-        &Triangle::init_ra_rb_rc,
-        &Triangle::init_HA_HB_HC,
-        &Triangle::init_IA_IB_IC,
-        &Triangle::init_GA_GB_GC,
-        &Triangle::dummy_update_sides
-    };
-
 class TriangleInfo
 {
 private:
@@ -44,6 +18,34 @@ public:
     TriangleInfo(Triangle * const _tr)
     {
         tr = _tr;
+    }
+
+    TrFuncPtrVec get_tr_func_ptr_vec()
+    {
+        return {
+            &Triangle::init_sinA_sinB_sinC,
+            &Triangle::init_sin2A_sin2B_sin2C,
+            &Triangle::init_sin3A_sin3B_sin3C,
+            &Triangle::init_cosA_cosB_cosC,
+            &Triangle::init_cos2A_cos2B_cos2C,
+            &Triangle::init_cos3A_cos3B_cos3C,
+            &Triangle::init_tanA_tanB_tanC,
+            &Triangle::init_sinA2_sinB2_sinC2,
+            &Triangle::init_cosA2_cosB2_cosC2,
+            &Triangle::init_tanA2_tanB2_tanC2,
+            &Triangle::init_tanA4_tanB4_tanC4,
+            &Triangle::init_K,
+            &Triangle::init_Q,
+            &Triangle::init_ha_hb_hc,
+            &Triangle::init_la_lb_lc,
+            &Triangle::init_ma_mb_mc,
+            &Triangle::init_sa_sb_sc,
+            &Triangle::init_ra_rb_rc,
+            &Triangle::init_HA_HB_HC,
+            &Triangle::init_IA_IB_IC,
+            &Triangle::init_GA_GB_GC,
+            &Triangle::dummy_update_sides
+        };
     }
 
     TrElemPtrMap get_tr_elem_ptr_map()
