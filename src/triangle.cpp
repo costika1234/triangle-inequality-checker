@@ -1,11 +1,4 @@
-#include "triangle.hpp"
-
-#include <cmath>
-#include <iomanip>
-#include <iostream>
-#include <sstream>
-#include <vector>
-#include <cfloat>
+#include <triangle.hpp>
 
 Triangle::Triangle(long_d _a, long_d _b, long_d _c)
 {

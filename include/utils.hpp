@@ -7,8 +7,8 @@
 #include <boost/regex.hpp>
 #include <regex>
 
-#include "exprtk.hpp"
-#include "aliases.hpp"
+#include <exprtk.hpp>
+#include <aliases.hpp>
 
 typedef long double long_d;
 typedef exprtk::symbol_table<long_d> symbol_table_t;

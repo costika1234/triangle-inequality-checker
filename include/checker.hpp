@@ -1,7 +1,7 @@
 #ifndef checker_hpp
 #define checker_hpp
 
-#include "triangle_info.hpp"
+#include <triangle_info.hpp>
 
 struct TriangleStats
 {
@@ -82,6 +82,5 @@ inline bool Checker::is_triangle(long_d a, long_d b, long_d c)
 {
     return (a < b + c) && (b < c + a) && (c < a + b);
 }
-
 
 #endif /* checker_hpp */

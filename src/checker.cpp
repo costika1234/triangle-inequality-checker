@@ -1,5 +1,5 @@
-#include "checker.hpp"
-#include "print_utils.hpp"
+#include <checker.hpp>
+#include <print_utils.hpp>
 
 #define CALL_MEMBER_FN(object, ptrToMember)  ((object).*(ptrToMember))
 

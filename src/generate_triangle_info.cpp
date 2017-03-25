@@ -33,7 +33,7 @@ pair<string, string> generate_triangle_info()
 {
     ostringstream func_ptrs;
     ostringstream member_elems_map;
-    ifstream f("triangle.hpp");
+    ifstream f("include/triangle.hpp");
     int pos = 0;
 
     for(string line; getline(f, line);)
@@ -78,8 +78,8 @@ pair<string, string> generate_triangle_info()
 
 int main(int argc, const char * argv[])
 {
-    ifstream in("triangle_info_template.txt");
-    ofstream out("triangle_info.hpp");
+    ifstream in("templates/triangle_info_template.txt");
+    ofstream out("include/triangle_info.hpp");
 
     ostringstream template_stream;
     template_stream << in.rdbuf();
