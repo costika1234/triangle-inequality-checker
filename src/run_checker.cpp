@@ -1,4 +1,4 @@
-#include <checker.hpp>
+#include "checker.hpp"
 
 using namespace std;
 
@@ -16,6 +16,7 @@ int main(int argc, const char * argv[])
 {
     Checker checker(read_input("inequality.txt"));
     checker.run();
+    checker.print_stats();
 
     return 0;
 }

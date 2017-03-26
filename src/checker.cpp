@@ -1,5 +1,5 @@
-#include <checker.hpp>
-#include <print_utils.hpp>
+#include "checker.hpp"
+#include "print_utils.hpp"
 
 #define CALL_MEMBER_FN(object, ptrToMember)  ((object).*(ptrToMember))
 
@@ -218,8 +218,11 @@ void Checker::run()
             }
         }
     }
+}
 
-    print_stats();
+TriangleStats Checker::get_stats() const
+{
+    return stats;
 }
 
 void Checker::print_stats() const

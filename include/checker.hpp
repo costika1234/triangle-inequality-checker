@@ -1,7 +1,7 @@
 #ifndef checker_hpp
 #define checker_hpp
 
-#include <triangle_info.hpp>
+#include "triangle_info.hpp"
 
 struct TriangleStats
 {
@@ -66,8 +66,6 @@ private:
                             expression_t& expression,
                             TrElemPtrMap& tr_elem_ptr_map);
 
-    void print_stats() const;
-
 public:
     Checker(string inequality,
             long_d _min_angle = 0,
@@ -76,6 +74,10 @@ public:
             long_d _step      = 0.1);
 
     void run();
+
+    TriangleStats get_stats() const;
+
+    void print_stats() const;
 };
 
 inline bool Checker::is_triangle(long_d a, long_d b, long_d c)

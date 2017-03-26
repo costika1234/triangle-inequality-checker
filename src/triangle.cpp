@@ -1,4 +1,4 @@
-#include <triangle.hpp>
+#include "triangle.hpp"
 
 Triangle::Triangle(long_d _a, long_d _b, long_d _c)
 {
