@@ -1,4 +1,4 @@
-#ifndef triangle_hpp
+#ifndef triangle_info
 #define triangle_info
 
 #include <triangle.hpp>
