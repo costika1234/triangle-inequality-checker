@@ -5,16 +5,24 @@
 
 struct TriangleStats
 {
-    int      iterations, passes, failures, equality_cases;
-    int      bager_I_passes, bager_II_passes;
-    int      bager_I_iterations, bager_II_iterations;
-    long_d   min_angle_holds, max_angle_holds;
-    long_d   min_LHS, max_LHS, min_RHS, max_RHS;
-    long_d   min_t, max_t;
-    Triangle tr_max_LHS, tr_min_RHS;
+    long      iterations, passes, failures, equality_cases;
+    long      bager_I_passes, bager_II_passes;
+    long      bager_I_iterations, bager_II_iterations;
+    long_d    min_angle_holds, max_angle_holds;
+    long_d    min_LHS, max_LHS, min_RHS, max_RHS;
+    long_d    min_t, max_t;
+    Triangle  tr_max_LHS, tr_min_RHS;
 
     TriangleStats(long_d phi_angle, long_d max_angle)
-        : min_angle_holds(phi_angle)
+        : iterations(0)
+        , passes(0)
+        , failures(0)
+        , equality_cases(0)
+        , bager_I_passes(0)
+        , bager_II_passes(0)
+        , bager_I_iterations(0)
+        , bager_II_iterations(0)
+        , min_angle_holds(phi_angle)
         , max_angle_holds(max_angle)
         , min_LHS(MAXFLOAT)
         , max_LHS(-MAXFLOAT)
