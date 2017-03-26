@@ -1,7 +1,7 @@
 #ifndef triangle_info
 #define triangle_info
 
-#include <triangle.hpp>
+#include "triangle.hpp"
 
 using namespace std;
 
