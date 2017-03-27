@@ -3,9 +3,11 @@
 
 #include <stdio.h>
 #include <cmath>
-#include <boost/algorithm/string/trim.hpp>
-#include <boost/regex.hpp>
 #include <regex>
+#include <algorithm>
+#include <functional>
+#include <cctype>
+#include <locale>
 
 #include "exprtk.hpp"
 #include "aliases.hpp"
@@ -15,7 +17,77 @@ typedef exprtk::symbol_table<long_d> symbol_table_t;
 typedef exprtk::expression<long_d>     expression_t;
 typedef exprtk::parser<long_d>             parser_t;
 
+namespace std
+{
+
+template<class BidirIt, class Traits, class CharT, class UnaryFunction>
+std::basic_string<CharT> regex_replace(BidirIt first,
+                                       BidirIt last,
+                                       const std::basic_regex<CharT,Traits>& re,
+                                       UnaryFunction f)
+{
+    std::basic_string<CharT> s;
+
+    typename std::match_results<BidirIt>::difference_type positionOfLastMatch = 0;
+    auto endOfLastMatch = first;
+
+    auto callback = [&](const std::match_results<BidirIt>& match)
+    {
+        auto positionOfThisMatch = match.position(0);
+        auto diff = positionOfThisMatch - positionOfLastMatch;
+
+        auto startOfThisMatch = endOfLastMatch;
+        std::advance(startOfThisMatch, diff);
+
+        s.append(endOfLastMatch, startOfThisMatch);
+        s.append(f(match));
+
+        auto lengthOfMatch = match.length(0);
+
+        positionOfLastMatch = positionOfThisMatch + lengthOfMatch;
+
+        endOfLastMatch = startOfThisMatch;
+        std::advance(endOfLastMatch, lengthOfMatch);
+    };
+
+    std::sregex_iterator begin(first, last, re), end;
+    std::for_each(begin, end, callback);
+
+    s.append(endOfLastMatch, last);
+
+    return s;
+}
+
+template<class Traits, class CharT, class UnaryFunction>
+std::string regex_replace(const std::string& s,
+                          const std::basic_regex<CharT,Traits>& re,
+                          UnaryFunction f)
+{
+    return regex_replace(s.cbegin(), s.cend(), re, f);
+}
+
+} // namespace std
+
 using namespace std;
+
+// Trim from start.
+static inline std::string &ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+            std::not1(std::ptr_fun<int, int>(std::isspace))));
+    return s;
+}
+
+// Trim from end.
+static inline std::string &rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(),
+            std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    return s;
+}
+
+// Trim from both ends.
+static inline std::string &trim(std::string &s) {
+    return ltrim(rtrim(s));
+}
 
 static bool almost_equal_relative(long_d A,
                                   long_d B,
@@ -73,8 +145,8 @@ static pair<string, string> parse_inequality(const string& inequality)
         }
     }
 
-    boost::trim(LHS);
-    boost::trim(RHS);
+    trim(LHS);
+    trim(RHS);
 
     return pair<string, string>(LHS, RHS);
 }
@@ -124,7 +196,7 @@ static void replace_char_with_next_cyclic_char(string& s, int pos, int index)
     }
 }
 
-static string get_next_var(const boost::smatch& m)
+static string get_next_var(const smatch& m)
 {
     string var = m.str(0);
     int pos = var.length() - 1;
@@ -156,11 +228,11 @@ static string get_next_var(const boost::smatch& m)
     return var;
 }
 
-static string build_cyclic_expr(const boost::smatch& m)
+static string build_cyclic_expr(const smatch& m)
 {
     string e1 = m.str(1);
-    string e2 = boost::regex_replace(e1, boost::regex(REGEX_TRIANGLE_VAR), &get_next_var);
-    string e3 = boost::regex_replace(e2, boost::regex(REGEX_TRIANGLE_VAR), &get_next_var);
+    string e2 = regex_replace(e1, regex(REGEX_TRIANGLE_VAR), &get_next_var);
+    string e3 = regex_replace(e2, regex(REGEX_TRIANGLE_VAR), &get_next_var);
 
     ostringstream cyclic_sum;
     cyclic_sum << "("
@@ -175,17 +247,13 @@ static string build_cyclic_expr(const boost::smatch& m)
 static void expand_cyclic_sums(string& inequality)
 {
     op = "+";
-    inequality = boost::regex_replace(inequality,
-                                boost::regex(REGEX_CYCLIC_SUM),
-                                &build_cyclic_expr);
+    inequality = regex_replace(inequality, regex(REGEX_CYCLIC_SUM), &build_cyclic_expr);
 }
 
 static void expand_cyclic_products(string& inequality)
 {
     op = "*";
-    inequality = boost::regex_replace(inequality,
-                                boost::regex(REGEX_CYCLIC_PROD),
-                                &build_cyclic_expr);
+    inequality = regex_replace(inequality, regex(REGEX_CYCLIC_PROD), &build_cyclic_expr);
 }
 
 static std::string replace_vars_with_aliases(const string& expr)

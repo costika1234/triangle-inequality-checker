@@ -2,7 +2,7 @@
 
 # Dependencies
 
-The **geometric-inequality-checker** can be built on UNIX platforms using **g++/clang++** and it only requires the **boost** library to be installed in **/usr/local/Cellar/boost/** (see Makefile).
+The **geometric-inequality-checker** can be built on UNIX platforms using **g++/clang++** and requires no further dependencies (see **Makefile**).
 
 # How to use?
 

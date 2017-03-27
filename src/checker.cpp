@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "checker.hpp"
 #include "print_utils.hpp"
 

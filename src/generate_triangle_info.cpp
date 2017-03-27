@@ -4,7 +4,6 @@
 #include <regex>
 #include <stdio.h>
 #include <iostream>
-#include <boost/algorithm/string/replace.hpp>
 
 using namespace std;
 
@@ -87,8 +86,12 @@ int main(int argc, const char * argv[])
 
     auto triangle_info = generate_triangle_info();
 
-    boost::replace_first(triangle_info_cpp, MEMBER_FUNC_PTR_KEY, triangle_info.first);
-    boost::replace_first(triangle_info_cpp, TRIANGLE_ELEM_MAP_KEY, triangle_info.second);
+    triangle_info_cpp = regex_replace(triangle_info_cpp,
+                                      regex(MEMBER_FUNC_PTR_KEY),
+                                      triangle_info.first);
+    triangle_info_cpp = regex_replace(triangle_info_cpp,
+                                      regex(TRIANGLE_ELEM_MAP_KEY),
+                                      triangle_info.second);
 
     out << triangle_info_cpp;
 
