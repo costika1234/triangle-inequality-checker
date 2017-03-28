@@ -220,6 +220,10 @@ void Checker::run()
             }
         }
     }
+
+    stats.bager_I_pass_rate = 100 * (long_d) stats.bager_I_passes  / stats.bager_I_iterations;
+    stats.bager_II_pass_rate = 100 * (long_d) stats.bager_II_passes / stats.bager_II_iterations;
+    stats.passed_rate = 100 * ((long_d) (stats.iterations - stats.failures)) / stats.iterations;
 }
 
 TriangleStats Checker::get_stats() const
@@ -271,10 +275,10 @@ void Checker::print_stats() const
          << "| 🌀 " << Color::FG_DEFAULT      << " iterations:  " << stats.iterations     << Color::FG_DEFAULT << endl
          << "|" << endl
          << "|" << Color::FG_LIGHT_CYAN << " A >= B >= 60º >= C (Bager I):   "
-                                        << 100 * (long_d) stats.bager_I_passes  / stats.bager_I_iterations
+                                        << stats.bager_I_pass_rate
                                         << "%" << Color::FG_DEFAULT << endl
          << "|" << Color::FG_LIGHT_CYAN << " A >= 60º >= B >= C (Bager II):  "
-                                        << 100 * (long_d) stats.bager_II_passes / stats.bager_II_iterations
+                                        << stats.bager_II_pass_rate
                                         << "%" << Color::FG_DEFAULT << endl
          << "|" << endl;
     cout << "|" << Color::FG_GREEN << " Holds for angles in range:     ["
@@ -285,7 +289,7 @@ void Checker::print_stats() const
                                    << Color::FG_DEFAULT << endl
          << "|" << endl
          << "|" << Color::FG_WHITE << " PASSED: "
-                                   << 100 * ((long_d) (stats.iterations - stats.failures)) / stats.iterations
+                                   << stats.passed_rate
                                    << "%" << Color::FG_DEFAULT << endl
          << "|" + underscore_str << endl
          << bold_off;
