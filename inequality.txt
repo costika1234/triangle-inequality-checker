@@ -1,1 +1,1 @@
-[sum (ma * ha) / la] <= [sum ra]
+8 * R * [prod ma] >= [sum b * b * c * c]

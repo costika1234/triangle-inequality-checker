@@ -1,7 +1,7 @@
 #include <assert.h>
+#include <future>
 
 #include "checker.hpp"
-#include "print_utils.hpp"
 
 #define CALL_MEMBER_FN(object, ptrToMember)  ((object).*(ptrToMember))
 
@@ -83,14 +83,14 @@ void Checker::init_exprtk_parser(string        inequality_side,
     parser.compile(inequality_side_with_aliases, expression);
 }
 
-void Checker::run()
+void Checker::run_range(long_d b_start, long_d b_end, long_d c_start, long_d c_end)
 {
     // Without loss of generality, set a = 100;
-    long_d a = 100.0, b = 0.0, c = 0.0;
+    long_d a = 100.0;
 
-    for (b = 0 ; b <= 1000; b += step)
+    for (long_d b = b_start ; b < b_end; b += step)
     {
-        for (c = 0 ; c <= 1000; c += step)
+        for (long_d c = c_start ; c < c_end; c += step)
         {
             if (!is_triangle(a, b, c))
             {
@@ -164,7 +164,7 @@ void Checker::run()
             if (verbose)
             {
                 cout << tr;
-                display_LHS_RHS(LHS, RHS);
+                PrintUtils::display_LHS_RHS(LHS, RHS);
             }
 
             if (LHS > RHS)
@@ -193,7 +193,7 @@ void Checker::run()
                 if (stop_if_false)
                 {
                     cout << tr;
-                    display_LHS_RHS(LHS, RHS);
+                    PrintUtils::display_LHS_RHS(LHS, RHS);
                     return;
                 }
             }
@@ -220,77 +220,9 @@ void Checker::run()
             }
         }
     }
-
-    stats.bager_I_pass_rate = 100 * (long_d) stats.bager_I_passes  / stats.bager_I_iterations;
-    stats.bager_II_pass_rate = 100 * (long_d) stats.bager_II_passes / stats.bager_II_iterations;
-    stats.passed_rate = 100 * ((long_d) (stats.iterations - stats.failures)) / stats.iterations;
 }
 
 TriangleStats Checker::get_stats() const
 {
     return stats;
-}
-
-void Checker::print_stats() const
-{
-    int underscore_length = 30 + string(expanded_LHS).length() + string(expanded_RHS).length();
-    underscore_length = max(underscore_length, 65);
-    string underscore_str = string(underscore_length, '_');
-    set_precision(cout, VERY_LOW_PRECISION);
-
-    cout << bold_on
-         << " " + underscore_str << endl
-         << "|" << endl
-         << "|" << Color::FG_LIGHT_MAGENTA << " Checking inequality: " << Color::FG_WHITE << expanded_LHS
-                                                                       << Color::FG_LIGHT_RED << " <= "
-                                                                       << Color::FG_WHITE << expanded_RHS
-                                                                       << Color::FG_DEFAULT << endl
-         << "|" << endl
-         << "|" << Color::FG_LIGHT_MAGENTA << " Subject to:          " << Color::FG_WHITE   << min_angle
-                                                                       << " <= A, B, C <= " << max_angle
-                                                                       << Color::FG_DEFAULT << endl
-         << "|"                            << "                      " << Color::FG_WHITE << "max{A, B, C} >= "
-                                                                       << phi_angle << Color::FG_DEFAULT << endl;
-
-    if (display_min_max_triangles)
-    {
-        cout << "|" << endl
-             << "|" << Color::FG_YELLOW << " (min_LHS, max_LHS) = " << "(" << stats.min_LHS << ", "
-                                                                           << stats.max_LHS << ")"
-                    << Color::FG_DEFAULT << endl
-             << "|" << Color::FG_YELLOW << "   🔼  Triangle which maximizes LHS: " << Color::FG_DEFAULT << endl
-                                                                                   << stats.tr_max_LHS
-             << "|" << endl
-             << "|" << Color::FG_YELLOW << " (min_RHS, max_RHS) = " << "(" << stats.min_RHS << ", "
-                                                                           << stats.max_RHS << ")"
-                    << Color::FG_DEFAULT << endl
-             << "|" << Color::FG_YELLOW << "   🔼  Triangle which minimizes RHS: " << Color::FG_DEFAULT << endl
-                                                                                   << stats.tr_min_RHS;
-    }
-
-    cout << "|" << endl
-         << "| ❌ " << Color::FG_LIGHT_RED    << " failures:    " << stats.failures       << Color::FG_DEFAULT << endl
-         << "| ✅ " << Color::FG_LIGHT_GREEN  << " passes:      " << stats.passes         << Color::FG_DEFAULT << endl
-         << "| 🔶 " << Color::FG_LIGHT_YELLOW << " equalities:  " << stats.equality_cases << Color::FG_DEFAULT << endl
-         << "| 🌀 " << Color::FG_DEFAULT      << " iterations:  " << stats.iterations     << Color::FG_DEFAULT << endl
-         << "|" << endl
-         << "|" << Color::FG_LIGHT_CYAN << " A >= B >= 60º >= C (Bager I):   "
-                                        << stats.bager_I_pass_rate
-                                        << "%" << Color::FG_DEFAULT << endl
-         << "|" << Color::FG_LIGHT_CYAN << " A >= 60º >= B >= C (Bager II):  "
-                                        << stats.bager_II_pass_rate
-                                        << "%" << Color::FG_DEFAULT << endl
-         << "|" << endl;
-    cout << "|" << Color::FG_GREEN << " Holds for angles in range:     ["
-                                   << stats.min_angle_holds << "º, " << stats.max_angle_holds << "º]"
-                                   << Color::FG_DEFAULT << endl;
-    cout << "|" << Color::FG_GREEN << " Holds for t = R / r in range:  ["
-                                   << stats.min_t << ", "  << stats.max_t << "]"
-                                   << Color::FG_DEFAULT << endl
-         << "|" << endl
-         << "|" << Color::FG_WHITE << " PASSED: "
-                                   << stats.passed_rate
-                                   << "%" << Color::FG_DEFAULT << endl
-         << "|" + underscore_str << endl
-         << bold_off;
 }

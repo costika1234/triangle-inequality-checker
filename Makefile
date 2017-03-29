@@ -4,7 +4,7 @@ INCLUDE = -I./include
 RM = rm -rf
 
 SRCDIR = src
-CHECKER_SRCS = $(shell echo $(SRCDIR)/{run_checker,checker,triangle}.cpp)
+CHECKER_SRCS = $(shell echo $(SRCDIR)/{main,parallel_checker,checker,triangle}.cpp)
 GENERATOR_SRCS = $(shell echo $(SRCDIR)/generate_triangle_info.cpp)
 
 BIN_DIR = bin

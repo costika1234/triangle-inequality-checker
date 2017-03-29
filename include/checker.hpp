@@ -2,6 +2,7 @@
 #define checker_hpp
 
 #include "triangle_info.hpp"
+#include "print_utils.hpp"
 
 struct TriangleStats
 {
@@ -32,10 +33,16 @@ private:
     string       expanded_LHS, expanded_RHS;
     expression_t expression_LHS, expression_RHS;
 
-    // TODO: Add description.
+    // min_angle <= min{A, B, C}.
     long_d min_angle;
+
+    // max{A, B, C} <= max_angle.
     long_d max_angle;
+
+    // max{A, B, C} >= phi_angle.
     long_d phi_angle;
+
+    // Iteration step.
     long_d step;
 
     // Must not be both set to 'true'.
@@ -46,7 +53,6 @@ private:
     const bool only_isosceles = false;
     const bool stop_if_false = false;
     const bool verbose = false;
-    const bool display_min_max_triangles = false;
 
     // Stats.
     TriangleStats stats;
@@ -72,11 +78,9 @@ public:
             long_d _phi_angle = 0,
             long_d _step      = 0.1);
 
-    void run();
-
     TriangleStats get_stats() const;
 
-    void print_stats() const;
+    void run_range(long_d b_start, long_d b_end, long_d c_start, long_d c_end);
 };
 
 inline bool Checker::is_triangle(long_d a, long_d b, long_d c)

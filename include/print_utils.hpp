@@ -27,33 +27,36 @@ namespace Color
         FG_WHITE         = 97
     };
 
-    std::ostream& operator<<(std::ostream& os, Code code)
+    static std::ostream& operator<<(std::ostream& os, Code code)
     {
         return os << "\033[" << static_cast<int>(code) << "m";
     }
 }
 
-void set_precision(std::ostream &stream, int precision)
+namespace PrintUtils
 {
-    stream.precision(precision);
-    stream.setf(ios::fixed, ios::floatfield);
-}
+    static void set_precision(std::ostream &stream, int precision)
+    {
+        stream.precision(precision);
+        stream.setf(ios::fixed, ios::floatfield);
+    }
 
-void display_LHS_RHS(long_d LHS, long_d RHS)
-{
-    string ineq_holds_str = (LHS <= RHS) ? "✅" : "❌";
-    cout << "(LHS: " << LHS << ", RHS: " << RHS << ") " << ineq_holds_str
-         << endl << endl;
-}
+    static void display_LHS_RHS(long_d LHS, long_d RHS)
+    {
+        string ineq_holds_str = (LHS <= RHS) ? "✅" : "❌";
+        cout << "(LHS: " << LHS << ", RHS: " << RHS << ") " << ineq_holds_str
+            << endl << endl;
+    }
 
-std::ostream& bold_on(std::ostream& os)
-{
-    return os << "\e[1m";
-}
+    static std::ostream& bold_on(std::ostream& os)
+    {
+        return os << "\e[1m";
+    }
 
-std::ostream& bold_off(std::ostream& os)
-{
-    return os << "\e[0m";
+    static std::ostream& bold_off(std::ostream& os)
+    {
+        return os << "\e[0m";
+    }
 }
 
 #endif /* print_utils_hpp */

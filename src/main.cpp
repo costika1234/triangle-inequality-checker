@@ -1,4 +1,4 @@
-#include "checker.hpp"
+#include "parallel_checker.hpp"
 
 using namespace std;
 
@@ -14,9 +14,9 @@ const string read_input(const string& filename)
 
 int main(int argc, const char * argv[])
 {
-    Checker checker(read_input("inequality.txt"));
-    checker.run();
-    checker.print_stats();
+    ParallelChecker parallel_checker(read_input("inequality.txt"));
+    parallel_checker.run();
+    parallel_checker.display_stats();
 
     return 0;
 }
