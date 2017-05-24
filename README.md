@@ -1,10 +1,10 @@
-[![Build Status](https://travis-ci.org/costika1234/geometric-inequality-checker.svg?branch=master)](https://travis-ci.org/costika1234/geometric-inequality-checker)
+[![Build Status](https://travis-ci.org/costika1234/triangle-inequality-checker.svg?branch=master)](https://travis-ci.org/costika1234/triangle-inequality-checker)
 
-# geometric-inequality-checker
+# triangle-inequality-checker
 
 # Dependencies
 
-The **geometric-inequality-checker** can be built on UNIX platforms using **g++/clang++** and requires no further dependencies (see **Makefile**).
+The **triangle-inequality-checker** can be built on UNIX platforms using **g++/clang++** and requires no further dependencies (see **Makefile**).
 
 # How to use?
 
