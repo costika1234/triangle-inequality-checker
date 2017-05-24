@@ -21,8 +21,9 @@ struct TriangleStats
         , bager_I_iterations(0), bager_II_iterations(0)
         , bager_I_pass_rate(0), bager_II_pass_rate(0), passed_rate(0)
         , min_angle_holds(phi_angle), max_angle_holds(max_angle)
-        , min_LHS(MAXFLOAT), max_LHS(-MAXFLOAT), min_RHS(MAXFLOAT), max_RHS(-MAXFLOAT)
-        , min_t(MAXFLOAT), max_t(-MAXFLOAT)
+        , min_LHS(numeric_limits<long_d>::max()), max_LHS(numeric_limits<long_d>::min())
+        , min_RHS(numeric_limits<long_d>::max()), max_RHS(numeric_limits<long_d>::min())
+        , min_t(numeric_limits<long_d>::max()), max_t(numeric_limits<long_d>::min())
         , tr_max_LHS(Triangle(0, 0, 0)), tr_min_RHS(Triangle(0, 0, 0)) { }
 };
 

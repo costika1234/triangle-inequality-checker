@@ -1,5 +1,14 @@
-CXX = clang++
-CXX_OPTIONS = -std=c++11
+SHELL=/bin/bash
+
+UNAME := $(shell uname -s)
+ifeq ($(UNAME),Linux)
+  CXX=g++
+endif
+ifeq ($(UNAME),Darwin)
+  CXX=/usr/bin/clang++
+endif
+
+CXX_OPTIONS = -std=c++11 -pthread
 INCLUDE = -I./include
 RM = rm -rf
 

@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/costika1234/geometric-inequality-checker.svg?branch=master)](https://travis-ci.org/costika1234/geometric-inequality-checker)
+
 # geometric-inequality-checker
 
 # Dependencies
