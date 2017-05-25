@@ -9,7 +9,7 @@ ifeq ($(UNAME),Darwin)
 endif
 
 CXX_OPTIONS = -std=c++11 -pthread
-INCLUDE = -I./include
+INCLUDE = -I./include -I./lib/exprtk
 RM = rm -rf
 
 SRCDIR = src
