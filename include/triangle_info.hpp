@@ -27,6 +27,7 @@ public:
     TrFuncPtrVec get_tr_func_ptr_vec()
     {
         return {
+            &Triangle::dummy_update_sides,
             &Triangle::init_sinA_sinB_sinC,
             &Triangle::init_sin2A_sin2B_sin2C,
             &Triangle::init_sin3A_sin3B_sin3C,
@@ -48,100 +49,102 @@ public:
             &Triangle::init_HA_HB_HC,
             &Triangle::init_IA_IB_IC,
             &Triangle::init_GA_GB_GC,
-            &Triangle::dummy_update_sides
+            NULL
         };
     }
 
     TrElemPtrMap get_tr_elem_ptr_map()
     {
         return {
-            { "sinA", { &tr->sinA, 0 } },
-            { "sinB", { &tr->sinB, 0 } },
-            { "sinC", { &tr->sinC, 0 } },
+            { "a", { &tr->a, 0 } },
+            { "b", { &tr->b, 0 } },
+            { "c", { &tr->c, 0 } },
+            { "R", { &tr->R, 0 } },
+            { "r", { &tr->r, 0 } },
+            { "s", { &tr->s, 0 } },
+            { "S", { &tr->S, 0 } },
             
-            { "sin2A", { &tr->sin2A, 1 } },
-            { "sin2B", { &tr->sin2B, 1 } },
-            { "sin2C", { &tr->sin2C, 1 } },
+            { "sinA", { &tr->sinA, 1 } },
+            { "sinB", { &tr->sinB, 1 } },
+            { "sinC", { &tr->sinC, 1 } },
             
-            { "sin3A", { &tr->sin3A, 2 } },
-            { "sin3B", { &tr->sin3B, 2 } },
-            { "sin3C", { &tr->sin3C, 2 } },
+            { "sin2A", { &tr->sin2A, 2 } },
+            { "sin2B", { &tr->sin2B, 2 } },
+            { "sin2C", { &tr->sin2C, 2 } },
             
-            { "cosA", { &tr->cosA, 3 } },
-            { "cosB", { &tr->cosB, 3 } },
-            { "cosC", { &tr->cosC, 3 } },
+            { "sin3A", { &tr->sin3A, 3 } },
+            { "sin3B", { &tr->sin3B, 3 } },
+            { "sin3C", { &tr->sin3C, 3 } },
             
-            { "cos2A", { &tr->cos2A, 4 } },
-            { "cos2B", { &tr->cos2B, 4 } },
-            { "cos2C", { &tr->cos2C, 4 } },
+            { "cosA", { &tr->cosA, 4 } },
+            { "cosB", { &tr->cosB, 4 } },
+            { "cosC", { &tr->cosC, 4 } },
             
-            { "cos3A", { &tr->cos3A, 5 } },
-            { "cos3B", { &tr->cos3B, 5 } },
-            { "cos3C", { &tr->cos3C, 5 } },
+            { "cos2A", { &tr->cos2A, 5 } },
+            { "cos2B", { &tr->cos2B, 5 } },
+            { "cos2C", { &tr->cos2C, 5 } },
             
-            { "tanA", { &tr->tanA, 6 } },
-            { "tanB", { &tr->tanB, 6 } },
-            { "tanC", { &tr->tanC, 6 } },
+            { "cos3A", { &tr->cos3A, 6 } },
+            { "cos3B", { &tr->cos3B, 6 } },
+            { "cos3C", { &tr->cos3C, 6 } },
             
-            { "sinA2", { &tr->sinA2, 7 } },
-            { "sinB2", { &tr->sinB2, 7 } },
-            { "sinC2", { &tr->sinC2, 7 } },
+            { "tanA", { &tr->tanA, 7 } },
+            { "tanB", { &tr->tanB, 7 } },
+            { "tanC", { &tr->tanC, 7 } },
             
-            { "cosA2", { &tr->cosA2, 8 } },
-            { "cosB2", { &tr->cosB2, 8 } },
-            { "cosC2", { &tr->cosC2, 8 } },
+            { "sinA2", { &tr->sinA2, 8 } },
+            { "sinB2", { &tr->sinB2, 8 } },
+            { "sinC2", { &tr->sinC2, 8 } },
             
-            { "tanA2", { &tr->tanA2, 9 } },
-            { "tanB2", { &tr->tanB2, 9 } },
-            { "tanC2", { &tr->tanC2, 9 } },
+            { "cosA2", { &tr->cosA2, 9 } },
+            { "cosB2", { &tr->cosB2, 9 } },
+            { "cosC2", { &tr->cosC2, 9 } },
             
-            { "tanA4", { &tr->tanA4, 10 } },
-            { "tanB4", { &tr->tanB4, 10 } },
-            { "tanC4", { &tr->tanC4, 10 } },
+            { "tanA2", { &tr->tanA2, 10 } },
+            { "tanB2", { &tr->tanB2, 10 } },
+            { "tanC2", { &tr->tanC2, 10 } },
             
-            { "K", { &tr->K, 11 } },
+            { "tanA4", { &tr->tanA4, 11 } },
+            { "tanB4", { &tr->tanB4, 11 } },
+            { "tanC4", { &tr->tanC4, 11 } },
             
-            { "Q", { &tr->Q, 12 } },
+            { "K", { &tr->K, 12 } },
             
-            { "ha", { &tr->ha, 13 } },
-            { "hb", { &tr->hb, 13 } },
-            { "hc", { &tr->hc, 13 } },
+            { "Q", { &tr->Q, 13 } },
             
-            { "la", { &tr->la, 14 } },
-            { "lb", { &tr->lb, 14 } },
-            { "lc", { &tr->lc, 14 } },
+            { "ha", { &tr->ha, 14 } },
+            { "hb", { &tr->hb, 14 } },
+            { "hc", { &tr->hc, 14 } },
             
-            { "ma", { &tr->ma, 15 } },
-            { "mb", { &tr->mb, 15 } },
-            { "mc", { &tr->mc, 15 } },
+            { "la", { &tr->la, 15 } },
+            { "lb", { &tr->lb, 15 } },
+            { "lc", { &tr->lc, 15 } },
             
-            { "sa", { &tr->sa, 16 } },
-            { "sb", { &tr->sb, 16 } },
-            { "sc", { &tr->sc, 16 } },
+            { "ma", { &tr->ma, 16 } },
+            { "mb", { &tr->mb, 16 } },
+            { "mc", { &tr->mc, 16 } },
             
-            { "ra", { &tr->ra, 17 } },
-            { "rb", { &tr->rb, 17 } },
-            { "rc", { &tr->rc, 17 } },
+            { "sa", { &tr->sa, 17 } },
+            { "sb", { &tr->sb, 17 } },
+            { "sc", { &tr->sc, 17 } },
             
-            { "HA", { &tr->HA, 18 } },
-            { "HB", { &tr->HB, 18 } },
-            { "HC", { &tr->HC, 18 } },
+            { "ra", { &tr->ra, 18 } },
+            { "rb", { &tr->rb, 18 } },
+            { "rc", { &tr->rc, 18 } },
             
-            { "IA", { &tr->IA, 19 } },
-            { "IB", { &tr->IB, 19 } },
-            { "IC", { &tr->IC, 19 } },
+            { "HA", { &tr->HA, 19 } },
+            { "HB", { &tr->HB, 19 } },
+            { "HC", { &tr->HC, 19 } },
             
-            { "GA", { &tr->GA, 20 } },
-            { "GB", { &tr->GB, 20 } },
-            { "GC", { &tr->GC, 20 } },
+            { "IA", { &tr->IA, 20 } },
+            { "IB", { &tr->IB, 20 } },
+            { "IC", { &tr->IC, 20 } },
             
-            { "a", { &tr->a, 21 } },
-            { "b", { &tr->b, 21 } },
-            { "c", { &tr->c, 21 } },
-            { "R", { &tr->R, 21 } },
-            { "r", { &tr->r, 21 } },
-            { "s", { &tr->s, 21 } },
-            { "S", { &tr->S, 21 } }
+            { "GA", { &tr->GA, 21 } },
+            { "GB", { &tr->GB, 21 } },
+            { "GC", { &tr->GC, 21 } },
+            
+            { "", { NULL, 0 } }
         };
     }
 };

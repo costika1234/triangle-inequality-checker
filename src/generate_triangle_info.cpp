@@ -13,17 +13,12 @@ static string TRIANGLE_ELEM_MAP_KEY = "__MAP_OF_TRIANGLE_ELEMENTS_TO_POINTERS__"
 static string REGEX_INIT_FUNCTIONS = "void init_(.*)\\(\\);";
 static char DELIMITER = '_';
 
-string get_triangle_elem_key_value(const string& elem,
-                                   int           pos,
-                                   bool          format=true)
+string get_triangle_elem_key_value(const string& elem, int pos)
 {
     ostringstream triangle_elem_key_value;
-    triangle_elem_key_value << "{ \"" << elem << "\", { &tr->" << elem << ", " << pos << " } }";
 
-    if (format)
-    {
-        triangle_elem_key_value << "," << endl << INDENT;
-    }
+    triangle_elem_key_value << "{ \"" << elem << "\", { &tr->" << elem << ", " << pos << " } }";
+    triangle_elem_key_value << "," << endl << INDENT;
 
     return triangle_elem_key_value.str();
 }
@@ -33,9 +28,19 @@ pair<string, string> generate_triangle_info()
     ostringstream func_ptrs;
     ostringstream member_elems_map;
     ifstream f("include/triangle.hpp");
-    int pos = 0;
 
-    for(string line; getline(f, line);)
+     // Handle special triangle elements which are computed every iteration.
+    func_ptrs << "&Triangle::dummy_update_sides" << "," << endl << INDENT;
+    for (auto special_elem : { "a", "b", "c", "R", "r", "s", "S" })
+    {
+        member_elems_map << get_triangle_elem_key_value(special_elem, 0);
+    }
+    member_elems_map << endl << INDENT;
+
+    // All the other elements will start from index 1.
+    int pos = 1;
+
+    for (string line; getline(f, line);)
     {
         regex re(REGEX_INIT_FUNCTIONS);
         smatch match;
@@ -51,26 +56,20 @@ pair<string, string> generate_triangle_info()
             func_ptrs << "&Triangle::init_" + match_str.str() + "," << endl << INDENT;
 
             string var;
-            while(getline(match_str, var, DELIMITER))
+            while (getline(match_str, var, DELIMITER))
             {
                 member_elems_map << get_triangle_elem_key_value(var, pos);
             }
 
             member_elems_map << endl << INDENT;
+
             ++pos;
         }
     }
 
-    // Handle special triangle elements which are compute every iteration.
-    func_ptrs << "&Triangle::dummy_update_sides";
-    vector<string> special_elems = { "a", "b", "c", "R", "r", "s", "S" };
-    int idx = 0;
-
-    for ( ; idx < special_elems.size() - 1; ++idx)
-    {
-        member_elems_map << get_triangle_elem_key_value(special_elems[idx], pos);
-    }
-    member_elems_map << get_triangle_elem_key_value(special_elems[idx], pos, false);
+    // Add dummy elements as the last entries for both maps.
+    func_ptrs << "NULL";
+    member_elems_map << "{ \"\", { NULL, 0 } }";
 
     return { func_ptrs.str(), member_elems_map.str() };
 }
