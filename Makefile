@@ -20,7 +20,7 @@ BIN_DIR = bin
 CHECKER_TOOL = $(BIN_DIR)/check_triangle_inequality
 GENERATOR_TOOL = $(BIN_DIR)/generate_triangle_info
 
-all: bin_dir clean generate_triangle_info checker
+all: bin_dir generate_triangle_info checker
 
 checker:
 	$(CXX) $(CXX_OPTIONS) $(INCLUDE) $(CHECKER_SRCS) -o $(CHECKER_TOOL)

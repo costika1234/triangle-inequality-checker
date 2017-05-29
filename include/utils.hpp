@@ -261,20 +261,6 @@ static void expand_cyclic_products(string& inequality)
 
 static std::string replace_vars_with_aliases(const string& expr)
 {
-    unordered_map<string, string> elem_alias_map =
-        {
-            { "R",  "circumradius"  },
-            { "r",  "inradius"      },
-            { "s",  "semiperimeter" },
-            { "S",  "area"          },
-            { "A",  "angleA"        },
-            { "B",  "angleB"        },
-            { "C",  "angleC"        },
-            { "ha", "heightA"       },
-            { "hb", "heightB"       },
-            { "hc", "heightC"       }
-        };
-
     ostringstream result;
     vector<pair<int, string>> matches;
 
