@@ -14,6 +14,16 @@ ParallelChecker::ParallelChecker(string inequality,
     , step(step)
     , finalStats(TriangleStats(phi_angle, max_angle))
 {
+
+}
+
+TriangleStats ParallelChecker::get_stats()
+{
+    return finalStats;
+}
+
+void ParallelChecker::run()
+{
     expand_cyclic_sums(inequality);
     expand_cyclic_products(inequality);
 
@@ -29,15 +39,7 @@ ParallelChecker::ParallelChecker(string inequality,
         futures.push_back(async(launch::async, &Checker::run_range, checkers[i],
                                 partitions[i][0], partitions[i][1], partitions[i][2], partitions[i][3]));
     }
-}
 
-TriangleStats ParallelChecker::get_stats()
-{
-    return finalStats;
-}
-
-void ParallelChecker::run()
-{
     for (auto& future : futures)
     {
         future.get();

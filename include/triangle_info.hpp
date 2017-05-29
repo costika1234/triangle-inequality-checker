@@ -19,12 +19,12 @@ private:
     Triangle* tr;
 
 public:
-    TriangleInfo(Triangle * const _tr)
+    TriangleInfo(Triangle * const _tr) : tr(_tr)
     {
-        tr = _tr;
+
     }
 
-    TrFuncPtrVec get_tr_func_ptr_vec()
+    const TrFuncPtrVec get_tr_func_ptr_vec()
     {
         return {
             &Triangle::dummy_update_sides,
@@ -53,7 +53,7 @@ public:
         };
     }
 
-    TrElemPtrMap get_tr_elem_ptr_map()
+    const TrElemPtrMap get_tr_elem_ptr_map()
     {
         return {
             { "a", { &tr->a, 0 } },

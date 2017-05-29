@@ -68,9 +68,9 @@ private:
 
     void init_funcs_and_parser();
 
-    void init_exprtk_parser(string        inequality_side,
-                            expression_t& expression,
-                            TrElemPtrMap& tr_elem_ptr_map);
+    void init_exprtk_parser(const string&        inequality_side,
+                            expression_t&        expression,
+                            const TrElemPtrMap&  tr_elem_ptr_map);
 
 public:
     Checker(string inequality,

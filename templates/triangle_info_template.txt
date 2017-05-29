@@ -19,19 +19,19 @@ private:
     Triangle* tr;
 
 public:
-    TriangleInfo(Triangle * const _tr)
+    TriangleInfo(Triangle * const _tr) : tr(_tr)
     {
-        tr = _tr;
+
     }
 
-    TrFuncPtrVec get_tr_func_ptr_vec()
+    const TrFuncPtrVec get_tr_func_ptr_vec()
     {
         return {
             __POINTERS_TO_MEMBER_FUNCTIONS__
         };
     }
 
-    TrElemPtrMap get_tr_elem_ptr_map()
+    const TrElemPtrMap get_tr_elem_ptr_map()
     {
         return {
             __MAP_OF_TRIANGLE_ELEMENTS_TO_POINTERS__

@@ -39,48 +39,40 @@ void Checker::init_funcs_and_parser()
 
     TriangleInfo tr_info(&tr);
     set<int> func_indices;
-    TrElemPtrMap tr_elem_ptr_map = tr_info.get_tr_elem_ptr_map();
-    TrFuncPtrVec tr_func_ptr_vec = tr_info.get_tr_func_ptr_vec();
+    const TrElemPtrMap tr_elem_ptr_map = tr_info.get_tr_elem_ptr_map();
+    const TrFuncPtrVec tr_func_ptr_vec = tr_info.get_tr_func_ptr_vec();
 
-    for_each(all_vars.begin(),
-             all_vars.end(),
-             [&](string var) { func_indices.insert(tr_elem_ptr_map[var].second); });
+    for (auto var : all_vars)
+    {
+        func_indices.insert(tr_elem_ptr_map.find(var)->second.second);
+    }
 
     // Remove the '0' index if present (as this corresponds to the dummy method).
     func_indices.erase(0);
 
-    for_each(func_indices.begin(),
-             func_indices.end(),
-             [&](int index) { required_init_funcs.push_back(tr_func_ptr_vec[index]); });
+    for (auto index : func_indices)
+    {
+        required_init_funcs.push_back(tr_func_ptr_vec[index]);
+    }
 
     init_exprtk_parser(expanded_LHS, expression_LHS, tr_elem_ptr_map);
     init_exprtk_parser(expanded_RHS, expression_RHS, tr_elem_ptr_map);
 }
 
-void Checker::init_exprtk_parser(string        inequality_side,
-                                 expression_t& expression,
-                                 TrElemPtrMap& tr_elem_ptr_map)
+void Checker::init_exprtk_parser(const string&       inequality_side,
+                                 expression_t&       expression,
+                                 const TrElemPtrMap& tr_elem_ptr_map)
 {
     symbol_table_t symbol_table;
     parser_t       parser;
 
-    set<string> vars = get_vars_from_expression(inequality_side);
-
-    for (auto& var : vars)
+    for (auto var : get_vars_from_expression(inequality_side))
     {
-        string renamed_var = (elem_alias_map.find(var) != elem_alias_map.end())
-            ? elem_alias_map[var]
-            : var;
-        symbol_table.add_variable(renamed_var, *tr_elem_ptr_map[var].first);
+        symbol_table.add_variable(var, *tr_elem_ptr_map.find(var)->second.first);
     }
 
     expression.register_symbol_table(symbol_table);
-
-    // Before compiling the expression, replace all occurences of variables which
-    // require aliases to prevent case sensitive clashes.
-    string inequality_side_with_aliases = replace_vars_with_aliases(inequality_side);
-
-    parser.compile(inequality_side_with_aliases, expression);
+    parser.compile(inequality_side, expression);
 }
 
 void Checker::run_range(long_d b_start, long_d b_end, long_d c_start, long_d c_end)

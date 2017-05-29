@@ -9,8 +9,8 @@
 #include <cctype>
 #include <locale>
 
+#define exprtk_disable_caseinsensitivity
 #include "exprtk.hpp"
-#include "aliases.hpp"
 
 typedef long double long_d;
 typedef exprtk::symbol_table<long_d> symbol_table_t;
@@ -117,9 +117,6 @@ const string REGEX_CYCLIC_PROD    = "\\[prod (?!prod)([^\\[\\]]*)\\]";
 const char DELIMITER = '_';
 const vector<char> next_vars = { 'b', 'c', 'a' };
 
-// Global vars.
-static string op;
-
 static pair<string, string> parse_inequality(const string& inequality)
 {
     string LHS;
@@ -143,13 +140,17 @@ static pair<string, string> parse_inequality(const string& inequality)
         }
         else
         {
-            cout << "Invalid input... Aborting!" << endl;
-            exit(EXIT_FAILURE);
+            throw runtime_error("Invalid input: missing either '<=' or '>='!");
         }
     }
 
     trim(LHS);
     trim(RHS);
+
+    if (LHS.empty() || RHS.empty())
+    {
+        throw runtime_error("Invalid input: either LHS or RHS is empty!");
+    }
 
     return pair<string, string>(LHS, RHS);
 }
@@ -231,7 +232,7 @@ static string get_next_var(const smatch& m)
     return var;
 }
 
-static string build_cyclic_expr(const smatch& m)
+static string expand_cyclic_expr(const smatch& m, const string& op)
 {
     string e1 = m.str(1);
     string e2 = regex_replace(e1, regex(REGEX_TRIANGLE_VAR), &get_next_var);
@@ -247,58 +248,24 @@ static string build_cyclic_expr(const smatch& m)
     return cyclic_sum.str();
 }
 
+static string expand_sum_expr(const smatch& m)
+{
+    return expand_cyclic_expr(m, "+");
+}
+
+static string expand_prod_expr(const smatch& m)
+{
+    return expand_cyclic_expr(m, "*");
+}
+
 static void expand_cyclic_sums(string& inequality)
 {
-    op = "+";
-    inequality = regex_replace(inequality, regex(REGEX_CYCLIC_SUM), &build_cyclic_expr);
+    inequality = regex_replace(inequality, regex(REGEX_CYCLIC_SUM), &expand_sum_expr);
 }
 
 static void expand_cyclic_products(string& inequality)
 {
-    op = "*";
-    inequality = regex_replace(inequality, regex(REGEX_CYCLIC_PROD), &build_cyclic_expr);
-}
-
-static std::string replace_vars_with_aliases(const string& expr)
-{
-    ostringstream result;
-    vector<pair<int, string>> matches;
-
-    regex words_regex(REGEX_TRIANGLE_VAR);
-    auto words_begin = sregex_iterator(expr.begin(), expr.end(), words_regex);
-    auto words_end   = sregex_iterator();
-
-    for (sregex_iterator it = words_begin; it != words_end; ++it)
-    {
-        smatch match = *it;
-        string match_str = match.str();
-        matches.push_back({ it->position(), match_str });
-    }
-
-    int pos = 0, m_idx = 0;
-
-    for ( ; m_idx < matches.size(); ++m_idx)
-    {
-        result << expr.substr(pos, matches[m_idx].first - pos);
-
-        // Append either the expression variable or its alias (via map lookup).
-        if (elem_alias_map.find(matches[m_idx].second) == elem_alias_map.end())
-        {
-            result << matches[m_idx].second;
-        }
-        else
-        {
-            result << elem_alias_map[matches[m_idx].second];
-        }
-
-        // The next position from which we copy characters on the next iteration.
-        pos = matches[m_idx].first + matches[m_idx].second.size();
-    }
-
-    // Copy the remaining characters (if any).
-    result << expr.substr(pos, expr.size() - pos);
-
-    return result.str();
+    inequality = regex_replace(inequality, regex(REGEX_CYCLIC_PROD), &expand_prod_expr);
 }
 
 #endif /* utils_hpp */
