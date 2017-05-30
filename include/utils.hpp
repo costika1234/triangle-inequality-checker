@@ -107,6 +107,12 @@ static bool almost_equal_relative(long_d A,
     return (diff <= largest * maxRelDiff);
 }
 
+// Numerically stable version of cotangent function.
+static long_d cot(long_d x)
+{
+    return cos(x) / sin(x);
+}
+
 const string REGEX_LHS_LEQ_RHS    = "(.*)\\s*<=\\s*(.*)";
 const string REGEX_LHS_GEQ_RHS    = "(.*)\\s*>=\\s*(.*)";
 const string REGEX_INIT_FUNCTIONS = "void init_(.*)\\(\\);";

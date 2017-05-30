@@ -95,6 +95,12 @@ public:
     // Quarter tangents.
     long_d tanA4, tanB4, tanC4;
 
+    // Half cotangents.
+    long_d cotA2, cotB2, cotC2;
+
+    // Quarter cotangents.
+    long_d cotA4, cotB4, cotC4;
+
     // K = sum(sin(A/2)); Q = sum(cos(A/2));
     long_d K, Q;
 
@@ -128,6 +134,8 @@ public:
 
     void init_tanA_tanB_tanC();
 
+    void init_cotA_cotB_cotC();
+
     void init_sinA2_sinB2_sinC2();
 
     void init_cosA2_cosB2_cosC2();
@@ -135,6 +143,10 @@ public:
     void init_tanA2_tanB2_tanC2();
 
     void init_tanA4_tanB4_tanC4();
+
+    void init_cotA2_cotB2_cotC2();
+
+    void init_cotA4_cotB4_cotC4();
 
     tuple_3 get_trig_func_of_nA_nB_nC(trig_func func, long_d n);
 

@@ -108,6 +108,13 @@ void Triangle::init_tanA_tanB_tanC()
     tanC = get<2>(tanA_tanB_tanC);
 }
 
+void Triangle::init_cotA_cotB_cotC()
+{
+    cotA = (b * b + c * c - a * a) / S;
+    cotB = (c * c + a * a - b * b) / S;
+    cotC = (a * a + b * b - c * c) / S;
+}
+
 void Triangle::init_sinA2_sinB2_sinC2()
 {
     auto sinA2_sinB2_sinC2 = get_trig_func_of_nA_nB_nC(&sin, 0.5);
@@ -138,6 +145,22 @@ void Triangle::init_tanA4_tanB4_tanC4()
     tanA4 = get<0>(tanA4_tanB4_tanC4);
     tanB4 = get<1>(tanA4_tanB4_tanC4);
     tanC4 = get<2>(tanA4_tanB4_tanC4);
+}
+
+void Triangle::init_cotA2_cotB2_cotC2()
+{
+    auto cotA2_cotB2_cotC2 = get_trig_func_of_nA_nB_nC(&cot, 0.5);
+    cotA2 = get<0>(cotA2_cotB2_cotC2);
+    cotB2 = get<1>(cotA2_cotB2_cotC2);
+    cotC2 = get<2>(cotA2_cotB2_cotC2);
+}
+
+void Triangle::init_cotA4_cotB4_cotC4()
+{
+    auto cotA4_cotB4_cotC4 = get_trig_func_of_nA_nB_nC(&cot, 0.25);
+    cotA4 = get<0>(cotA4_cotB4_cotC4);
+    cotB4 = get<1>(cotA4_cotB4_cotC4);
+    cotC4 = get<2>(cotA4_cotB4_cotC4);
 }
 
 tuple_3 Triangle::get_trig_func_of_nA_nB_nC(trig_func func, long_d n)
