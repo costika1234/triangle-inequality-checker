@@ -31,7 +31,7 @@ pair<string, string> generate_triangle_info()
 
      // Handle special triangle elements which are computed every iteration.
     func_ptrs << "&Triangle::dummy_update_sides" << "," << endl << INDENT;
-    for (auto special_elem : { "a", "b", "c", "R", "r", "s", "S" })
+    for (auto special_elem : { "a", "b", "c", "A", "B", "C", "R", "r", "s", "S" })
     {
         member_elems_map << get_triangle_elem_key_value(special_elem, 0);
     }
