@@ -53,6 +53,7 @@ public:
             &Triangle::init_IA_IB_IC,
             &Triangle::init_KA_KB_KC,
             &Triangle::init_GA_GB_GC,
+            &Triangle::init_NA_NB_NC,
             NULL
         };
     }
@@ -166,6 +167,10 @@ public:
             { "GA", { &tr->GA, 25 } },
             { "GB", { &tr->GB, 25 } },
             { "GC", { &tr->GC, 25 } },
+            
+            { "NA", { &tr->NA, 26 } },
+            { "NB", { &tr->NB, 26 } },
+            { "NC", { &tr->NC, 26 } },
             
             { "", { NULL, 0 } }
         };

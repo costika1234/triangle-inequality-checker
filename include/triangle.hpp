@@ -53,11 +53,14 @@ public:
     // IA, IB, IC -- I = incenter.
     long_d IA, IB, IC;
 
-    // KA, KB, KC -- K = Lemoine point.
+    // KA, KB, KC -- K = Lemoine's point.
     long_d KA, KB, KC;
 
     // GA, GB, GC -- G = centroid.
     long_d GA, GB, GC;
+
+    // NA, NB, NC -- N = Nagel's point.
+    long_d NA, NB, NC;
 
     // Sines.
     long_d sinA, sinB, sinC;
@@ -174,6 +177,8 @@ public:
     void init_KA_KB_KC();
 
     void init_GA_GB_GC();
+
+    void init_NA_NB_NC();
 };
 
 ostream& operator<<(ostream& os, const Triangle& tr);

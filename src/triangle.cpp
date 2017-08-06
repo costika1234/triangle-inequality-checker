@@ -255,6 +255,13 @@ void Triangle::init_GA_GB_GC()
     GC = (2.0 * mc) / ((long_d) 3);
 }
 
+void Triangle::init_NA_NB_NC()
+{
+    NA = sqrt((b - c) * (b - c) + 4 * r * r);
+    NB = sqrt((c - a) * (c - a) + 4 * r * r);
+    NC = sqrt((a - b) * (a - b) + 4 * r * r);
+}
+
 ostream& operator<<(ostream& os, const Triangle& tr)
 {
     os << "|     Angles: (" << tr.A << "º, " << tr.B << "º, " << tr.C << "º)" << endl
