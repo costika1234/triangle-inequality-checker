@@ -53,6 +53,9 @@ public:
     // IA, IB, IC -- I = incenter.
     long_d IA, IB, IC;
 
+    // KA, KB, KC -- K = Lemoine point.
+    long_d KA, KB, KC;
+
     // GA, GB, GC -- G = centroid.
     long_d GA, GB, GC;
 
@@ -167,6 +170,8 @@ public:
     void init_HA_HB_HC();
 
     void init_IA_IB_IC();
+
+    void init_KA_KB_KC();
 
     void init_GA_GB_GC();
 };

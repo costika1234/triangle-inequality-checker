@@ -51,6 +51,7 @@ public:
             &Triangle::init_ra_rb_rc,
             &Triangle::init_HA_HB_HC,
             &Triangle::init_IA_IB_IC,
+            &Triangle::init_KA_KB_KC,
             &Triangle::init_GA_GB_GC,
             NULL
         };
@@ -158,9 +159,13 @@ public:
             { "IB", { &tr->IB, 23 } },
             { "IC", { &tr->IC, 23 } },
             
-            { "GA", { &tr->GA, 24 } },
-            { "GB", { &tr->GB, 24 } },
-            { "GC", { &tr->GC, 24 } },
+            { "KA", { &tr->KA, 24 } },
+            { "KB", { &tr->KB, 24 } },
+            { "KC", { &tr->KC, 24 } },
+            
+            { "GA", { &tr->GA, 25 } },
+            { "GB", { &tr->GB, 25 } },
+            { "GC", { &tr->GC, 25 } },
             
             { "", { NULL, 0 } }
         };

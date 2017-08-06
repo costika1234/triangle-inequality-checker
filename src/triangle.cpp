@@ -238,6 +238,15 @@ void Triangle::init_IA_IB_IC()
     IC = r / sinC2;
 }
 
+void Triangle::init_KA_KB_KC()
+{
+    init_ma_mb_mc();
+    long_d sum_of_squares = a * a + b * b + c * c;
+    KA = 2 * b * c * ma / sum_of_squares;
+    KB = 2 * c * a * mb / sum_of_squares;
+    KC = 2 * a * b * mc / sum_of_squares;
+}
+
 void Triangle::init_GA_GB_GC()
 {
     init_ma_mb_mc();
