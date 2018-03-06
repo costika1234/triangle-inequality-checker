@@ -70,6 +70,8 @@ void Checker::init_exprtk_parser(const string&       inequality_side,
     {
         symbol_table.add_variable(var, *tr_elem_ptr_map.find(var)->second.first);
     }
+    // Add 'exprtk' constants such as pi.
+    symbol_table.add_constants();
 
     expression.register_symbol_table(symbol_table);
     parser.compile(inequality_side, expression);
