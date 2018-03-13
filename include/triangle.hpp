@@ -62,6 +62,9 @@ public:
     // NA, NB, NC -- N = Nagel's point.
     long_d NA, NB, NC;
 
+    // FA, FB, FC -- F = Fermat's 1st point (valid only for max{A, B, C} <= 120).
+    long_d FA, FB, FC;
+
     // Sines.
     long_d sinA, sinB, sinC;
 
@@ -179,6 +182,8 @@ public:
     void init_GA_GB_GC();
 
     void init_NA_NB_NC();
+
+    void init_FA_FB_FC();
 };
 
 ostream& operator<<(ostream& os, const Triangle& tr);

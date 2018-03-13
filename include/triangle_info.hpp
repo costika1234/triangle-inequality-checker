@@ -54,6 +54,7 @@ public:
             &Triangle::init_KA_KB_KC,
             &Triangle::init_GA_GB_GC,
             &Triangle::init_NA_NB_NC,
+            &Triangle::init_FA_FB_FC,
             NULL
         };
     }
@@ -171,6 +172,10 @@ public:
             { "NA", { &tr->NA, 26 } },
             { "NB", { &tr->NB, 26 } },
             { "NC", { &tr->NC, 26 } },
+            
+            { "FA", { &tr->FA, 27 } },
+            { "FB", { &tr->FB, 27 } },
+            { "FC", { &tr->FC, 27 } },
             
             { "", { NULL, 0 } }
         };

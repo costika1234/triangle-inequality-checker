@@ -262,6 +262,15 @@ void Triangle::init_NA_NB_NC()
     NC = sqrt((a - b) * (a - b) + 4 * r * r);
 }
 
+void Triangle::init_FA_FB_FC()
+{
+    long_d min_fermat_distance = sqrt(0.5 * (a * a + b * b + c * c + 4 * S * sqrt(3)));
+    long_d scaled_distance = 2.0 * sqrt(3) * min_fermat_distance;
+    FA = (sqrt(3) * (b * b + c * c - a * a) + 4 * S) / scaled_distance;
+    FB = (sqrt(3) * (c * c + a * a - b * b) + 4 * S) / scaled_distance;
+    FC = (sqrt(3) * (a * a + b * b - c * c) + 4 * S) / scaled_distance;
+}
+
 ostream& operator<<(ostream& os, const Triangle& tr)
 {
     os << "|     Angles: (" << tr.A << "º, " << tr.B << "º, " << tr.C << "º)" << endl
