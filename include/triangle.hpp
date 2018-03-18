@@ -12,8 +12,6 @@
 
 #include "utils.hpp"
 
-using namespace std;
-
 typedef tuple<long_d, long_d, long_d> tuple_3;
 typedef long_d (*trig_func)(long_d);
 
@@ -119,6 +117,9 @@ public:
     // The Fermat-Torricelli distance (the best minimal bound for [sum PA] when max{A, B, C} <= 120)
     long_d FT;
 
+    // Distances between remarkable points in triangle.
+    long_d OI, IH, OG;
+
     Triangle(long_d _a, long_d _b, long_d _c);
 
     void update_sides(long_d _a, long_d _b, long_d _c);
@@ -170,6 +171,12 @@ public:
     void init_Q();
 
     void init_FT();
+
+    void init_OI();
+
+    void init_IH();
+
+    void init_OG();
 
     void init_ha_hb_hc();
 

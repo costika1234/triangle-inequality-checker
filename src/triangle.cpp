@@ -190,6 +190,21 @@ void Triangle::init_FT()
     FT = sqrt(0.5 * (a * a + b * b + c * c) + 2 * S * sqrt(3));
 }
 
+void Triangle::init_OI()
+{
+    OI = sqrt(R * R - 2 * R * r);
+}
+
+void Triangle::init_IH()
+{
+    IH = sqrt(4 * R * (R + r) + 3 * r * r - s * s);
+}
+
+void Triangle::init_OG()
+{
+    OG = sqrt(R * R - (a * a + b * b + c * c) / 9.0);
+}
+
 void Triangle::init_ha_hb_hc()
 {
     long_d twice_area = 2 * S;

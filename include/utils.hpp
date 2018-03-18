@@ -8,36 +8,31 @@
 #include <functional>
 #include <cctype>
 #include <locale>
+#include <cfloat>
+#include <set>
 
-#define exprtk_disable_caseinsensitivity
-#include "exprtk.hpp"
+#include "constants.hpp"
 
 typedef long double long_d;
-typedef exprtk::symbol_table<long_d> symbol_table_t;
-typedef exprtk::expression<long_d>     expression_t;
-typedef exprtk::parser<long_d>             parser_t;
-
-namespace std
-{
 
 template<class BidirIt, class Traits, class CharT, class UnaryFunction>
-std::basic_string<CharT> regex_replace(BidirIt first,
-                                       BidirIt last,
-                                       const std::basic_regex<CharT,Traits>& re,
-                                       UnaryFunction f)
+basic_string<CharT> regex_replace_with_callback(BidirIt first,
+                                                BidirIt last,
+                                                const basic_regex<CharT, Traits>& re,
+                                                UnaryFunction f)
 {
-    std::basic_string<CharT> s;
+    basic_string<CharT> s;
 
-    typename std::match_results<BidirIt>::difference_type positionOfLastMatch = 0;
+    typename match_results<BidirIt>::difference_type positionOfLastMatch = 0;
     auto endOfLastMatch = first;
 
-    auto callback = [&](const std::match_results<BidirIt>& match)
+    auto callback = [&](const match_results<BidirIt>& match)
     {
         auto positionOfThisMatch = match.position(0);
         auto diff = positionOfThisMatch - positionOfLastMatch;
 
         auto startOfThisMatch = endOfLastMatch;
-        std::advance(startOfThisMatch, diff);
+        advance(startOfThisMatch, diff);
 
         s.append(endOfLastMatch, startOfThisMatch);
         s.append(f(match));
@@ -47,11 +42,11 @@ std::basic_string<CharT> regex_replace(BidirIt first,
         positionOfLastMatch = positionOfThisMatch + lengthOfMatch;
 
         endOfLastMatch = startOfThisMatch;
-        std::advance(endOfLastMatch, lengthOfMatch);
+        advance(endOfLastMatch, lengthOfMatch);
     };
 
-    std::sregex_iterator begin(first, last, re), end;
-    std::for_each(begin, end, callback);
+    sregex_iterator begin(first, last, re), end;
+    for_each(begin, end, callback);
 
     s.append(endOfLastMatch, last);
 
@@ -59,35 +54,30 @@ std::basic_string<CharT> regex_replace(BidirIt first,
 }
 
 template<class Traits, class CharT, class UnaryFunction>
-std::string regex_replace(const std::string& s,
-                          const std::basic_regex<CharT,Traits>& re,
-                          UnaryFunction f)
+string regex_replace_with_callback(const string& s,
+                                   const basic_regex<CharT, Traits>& re,
+                                   UnaryFunction f)
 {
-    return regex_replace(s.cbegin(), s.cend(), re, f);
+    return regex_replace_with_callback(s.cbegin(), s.cend(), re, f);
 }
 
-} // namespace std
-
-using namespace std;
-
 // Trim from start.
-static inline std::string &ltrim(std::string &s)
+static inline string &ltrim(string &s)
 {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
-            std::not1(std::ptr_fun<int, int>(std::isspace))));
+    s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
     return s;
 }
 
 // Trim from end.
-static inline std::string &rtrim(std::string &s)
+static inline string &rtrim(string &s)
 {
-    s.erase(std::find_if(s.rbegin(), s.rend(),
-            std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    s.erase(find_if(s.rbegin(), s.rend(),
+            not1(ptr_fun<int, int>(isspace))).base(), s.end());
     return s;
 }
 
 // Trim from both ends.
-static inline std::string &trim(std::string &s)
+static inline string &trim(string &s)
 {
     return ltrim(rtrim(s));
 }
@@ -112,16 +102,6 @@ static long_d cot(long_d x)
 {
     return cos(x) / sin(x);
 }
-
-const string REGEX_LHS_LEQ_RHS    = "(.*)\\s*<=\\s*(.*)";
-const string REGEX_LHS_GEQ_RHS    = "(.*)\\s*>=\\s*(.*)";
-const string REGEX_INIT_FUNCTIONS = "void init_(.*)\\(\\);";
-const string REGEX_TRIANGLE_VAR   = "(?!sqrt\\b|long_d\\b|t\\b|sum\\b|prod\\b|pow\\b|"
-                                    "sin\\b|cos\\b|pi\\b)\\b[a-zA-Z]+([0-9]?)+[A-Z]?";
-const string REGEX_CYCLIC_SUM     = "\\[sum (?!sum)([^\\[\\]]*)\\]";
-const string REGEX_CYCLIC_PROD    = "\\[prod (?!prod)([^\\[\\]]*)\\]";
-const char DELIMITER = '_';
-const vector<char> next_vars = { 'b', 'c', 'a' };
 
 static pair<string, string> parse_inequality(const string& inequality)
 {
@@ -161,19 +141,27 @@ static pair<string, string> parse_inequality(const string& inequality)
     return pair<string, string>(LHS, RHS);
 }
 
+static bool is_distance_between_remarkable_points(const string& match)
+{
+    if (match.length() == 2)
+    { 
+        regex remarkable_distance_regex(REGEX_REMARKABLE_DIST);
+        return sregex_iterator(match.begin(), match.end(), remarkable_distance_regex) != sregex_iterator();
+    }
+    
+    return false;
+}
+
 static set<string> get_vars_from_expression(const string& expr)
 {
     set<string> result;
 
-    regex words_regex(REGEX_TRIANGLE_VAR);
-    auto words_begin = sregex_iterator(expr.begin(), expr.end(), words_regex);
-    auto words_end   = sregex_iterator();
+    regex triangle_var_regex(REGEX_TRIANGLE_VAR);
+    auto triangle_vars_it = sregex_iterator(expr.begin(), expr.end(), triangle_var_regex);
 
-    for (sregex_iterator it = words_begin; it != words_end; ++it)
+    for (auto it = triangle_vars_it; it != sregex_iterator(); ++it)
     {
-        smatch match = *it;
-        string match_str = match.str();
-        result.insert(match_str);
+        result.insert(it->str());
     }
 
     return result;
@@ -241,8 +229,8 @@ static string get_next_var(const smatch& m)
 static string expand_cyclic_expr(const smatch& m, const string& op)
 {
     string e1 = m.str(1);
-    string e2 = regex_replace(e1, regex(REGEX_TRIANGLE_VAR), &get_next_var);
-    string e3 = regex_replace(e2, regex(REGEX_TRIANGLE_VAR), &get_next_var);
+    string e2 = regex_replace_with_callback(e1, regex(REGEX_TRIANGLE_VAR), &get_next_var);
+    string e3 = regex_replace_with_callback(e2, regex(REGEX_TRIANGLE_VAR), &get_next_var);
 
     ostringstream cyclic_sum;
     cyclic_sum << "("
@@ -266,12 +254,12 @@ static string expand_prod_expr(const smatch& m)
 
 static void expand_cyclic_sums(string& inequality)
 {
-    inequality = regex_replace(inequality, regex(REGEX_CYCLIC_SUM), &expand_sum_expr);
+    inequality = regex_replace_with_callback(inequality, regex(REGEX_CYCLIC_SUM), &expand_sum_expr);
 }
 
 static void expand_cyclic_products(string& inequality)
 {
-    inequality = regex_replace(inequality, regex(REGEX_CYCLIC_PROD), &expand_prod_expr);
+    inequality = regex_replace_with_callback(inequality, regex(REGEX_CYCLIC_PROD), &expand_prod_expr);
 }
 
 #endif /* utils_hpp */

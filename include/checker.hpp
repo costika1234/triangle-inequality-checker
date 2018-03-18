@@ -4,6 +4,13 @@
 #include "triangle_info.hpp"
 #include "print_utils.hpp"
 
+#define exprtk_disable_caseinsensitivity
+#include "exprtk.hpp"
+
+typedef exprtk::symbol_table<long_d> symbol_table_t;
+typedef exprtk::expression<long_d>     expression_t;
+typedef exprtk::parser<long_d>             parser_t;
+
 struct TriangleStats
 {
     long      iterations, passes, failures, equality_cases;

@@ -1,24 +1,18 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <regex>
 #include <stdio.h>
 #include <iostream>
 
-using namespace std;
+#include "utils.hpp"
 
-static string INDENT = string(12, ' ');
-static string MEMBER_FUNC_PTR_KEY = "__POINTERS_TO_MEMBER_FUNCTIONS__";
-static string TRIANGLE_ELEM_MAP_KEY = "__MAP_OF_TRIANGLE_ELEMENTS_TO_POINTERS__";
-static string REGEX_INIT_FUNCTIONS = "void init_(.*)\\(\\);";
-static char DELIMITER = '_';
-
-string get_triangle_elem_key_value(const string& elem, int pos)
+string get_triangle_elem_key_value(const string& elem, const string& triangle_class_field, int pos)
 {
     ostringstream triangle_elem_key_value;
-
-    triangle_elem_key_value << "{ \"" << elem << "\", { &tr->" << elem << ", " << pos << " } }";
-    triangle_elem_key_value << "," << endl << INDENT;
+    triangle_elem_key_value << "{ \"" << elem 
+                            << "\", { &tr->" << triangle_class_field 
+                            << ", " << pos << " } }"
+                            << "," << endl << INDENT;
 
     return triangle_elem_key_value.str();
 }
@@ -33,7 +27,7 @@ pair<string, string> generate_triangle_info()
     func_ptrs << "&Triangle::dummy_update_sides" << "," << endl << INDENT;
     for (auto special_elem : { "a", "b", "c", "A", "B", "C", "R", "r", "s", "S" })
     {
-        member_elems_map << get_triangle_elem_key_value(special_elem, 0);
+        member_elems_map << get_triangle_elem_key_value(special_elem, special_elem, 0);
     }
     member_elems_map << endl << INDENT;
 
@@ -55,10 +49,17 @@ pair<string, string> generate_triangle_info()
 
             func_ptrs << "&Triangle::init_" + match_str.str() + "," << endl << INDENT;
 
-            string var;
-            while (getline(match_str, var, DELIMITER))
+            for (string var; getline(match_str, var, DELIMITER);)
             {
-                member_elems_map << get_triangle_elem_key_value(var, pos);
+                member_elems_map << get_triangle_elem_key_value(var, var, pos);
+                // When dealing with remarkable points, add a new entry in the map with a reversed
+                // key, but pointing to the same triangle class field ('var').
+                if (is_distance_between_remarkable_points(var)) 
+                {
+                    ostringstream reversed_var;
+                    reversed_var << var[1] << var[0];
+                    member_elems_map << get_triangle_elem_key_value(reversed_var.str(), var, pos);
+                } 
             }
 
             member_elems_map << endl << INDENT;
