@@ -44,6 +44,11 @@ void Checker::init_funcs_and_parser()
 
     for (auto var : all_vars)
     {
+        if (tr_elem_ptr_map.find(var) == tr_elem_ptr_map.end()) {
+            cout << "Variable '" << var 
+                 << "' is undefined in triangle-inequality-checker." << endl;
+            exit(EXIT_FAILURE);
+        }
         func_indices.insert(tr_elem_ptr_map.find(var)->second.second);
     }
 

@@ -47,6 +47,9 @@ public:
     // Radii of excircles.
     long_d ra, rb, rc;
 
+    // Nagel cevians.
+    long_d na, nb, nc;
+
     // HA, HB, HC -- H = orthocenter.
     long_d HA, HB, HC;
 
@@ -113,6 +116,9 @@ public:
     // K = sum(sin(A/2)); Q = sum(cos(A/2));
     long_d K, Q;
 
+    // The Fermat-Torricelli distance (the best minimal bound for [sum PA] when max{A, B, C} <= 120)
+    long_d FT;
+
     Triangle(long_d _a, long_d _b, long_d _c);
 
     void update_sides(long_d _a, long_d _b, long_d _c);
@@ -163,6 +169,8 @@ public:
 
     void init_Q();
 
+    void init_FT();
+
     void init_ha_hb_hc();
 
     void init_la_lb_lc();
@@ -172,6 +180,8 @@ public:
     void init_sa_sb_sc();
 
     void init_ra_rb_rc();
+
+    void init_na_nb_nc();
 
     void init_HA_HB_HC();
 

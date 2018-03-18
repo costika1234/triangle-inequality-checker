@@ -185,6 +185,11 @@ void Triangle::init_Q()
     Q = cosA2 + cosB2 + cosC2;
 }
 
+void Triangle::init_FT()
+{
+    FT = sqrt(0.5 * (a * a + b * b + c * c) + 2 * S * sqrt(3));
+}
+
 void Triangle::init_ha_hb_hc()
 {
     long_d twice_area = 2 * S;
@@ -221,6 +226,13 @@ void Triangle::init_ra_rb_rc()
     ra = S / (s - a);
     rb = S / (s - b);
     rc = S / (s - c);
+}
+
+void Triangle::init_na_nb_nc()
+{
+    na = sqrt(s * s - 4 * s * (s - b) * (s - c) / a);
+    nb = sqrt(s * s - 4 * s * (s - c) * (s - a) / b);
+    nc = sqrt(s * s - 4 * s * (s - a) * (s - b) / c);
 }
 
 void Triangle::init_HA_HB_HC()
