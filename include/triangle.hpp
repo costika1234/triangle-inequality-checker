@@ -118,7 +118,7 @@ public:
     long_d FT;
 
     // Distances between remarkable points in triangle.
-    long_d OI, IH, OG;
+    long_d OI, IH, OG, IG, ON, OH, HN, IN, OK, IK;
 
     Triangle(long_d _a, long_d _b, long_d _c);
 
@@ -177,6 +177,20 @@ public:
     void init_IH();
 
     void init_OG();
+
+    void init_IG();
+    
+    void init_ON();
+    
+    void init_OH();
+    
+    void init_HN();
+    
+    void init_IN();
+
+    void init_OK();
+    
+    void init_IK();
 
     void init_ha_hb_hc();
 

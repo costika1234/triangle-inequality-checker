@@ -205,6 +205,45 @@ void Triangle::init_OG()
     OG = sqrt(R * R - (a * a + b * b + c * c) / 9.0);
 }
 
+void Triangle::init_IG()
+{
+    IG = sqrt(s * s + 5 * r * r - 16 * R * r) / 3.0;
+}
+    
+void Triangle::init_ON()
+{
+    ON = R - 2 * r;
+}
+
+void Triangle::init_OH()
+{
+    OH = R * R * (1 - cosA * cosB * cosC);
+}
+
+void Triangle::init_HN()
+{
+    init_OI();
+    HN = 2 * OI;
+}
+
+void Triangle::init_IN()
+{
+    init_IG();
+    IN = 3 * IG;
+}
+
+void Triangle::init_OK()
+{
+    long_d sum_of_squares = a * a + b * b + c * c;
+    OK = R * R - (3 * a * a * b * b * c * c) / (sum_of_squares * sum_of_squares);
+}
+
+void Triangle::init_IK()
+{
+    long_d factor = s * s - 4 * R * r - r * r;
+    IK = 4 * R * r * r * (s * s * (R + r) - r * (4 * R + r) * (4 * R + r)) / (factor * factor);
+}
+
 void Triangle::init_ha_hb_hc()
 {
     long_d twice_area = 2 * S;
