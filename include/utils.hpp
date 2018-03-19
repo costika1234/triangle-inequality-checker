@@ -182,45 +182,26 @@ static set<string> get_vars_from_inequality(const string& LHS, const string& RHS
     return all_vars;
 }
 
-static void replace_char_with_next_cyclic_char(string& s, int pos, int index)
+static void replace_char_with_next_cyclic_char(string& s, int pos, bool& has_replaced)
 {
-    if (isupper(s[pos]))
+    if (tolower(s[pos]) >= 'a' && tolower(s[pos]) <= 'c')
     {
-        s[pos] = toupper(next_vars.at(index));
+        s[pos] = (tolower(s[pos] + 1) > 'c') ? s[pos] - 2 : s[pos] + 1;
+        has_replaced = true;
     }
-    else
-    {
-        s[pos] = next_vars.at(index);
-    }
+
+    has_replaced = false;
 }
 
 static string get_next_var(const smatch& m)
 {
     string var = m.str(0);
-    int pos = var.length() - 1;
-    char last_char = var[pos];
+    bool has_replaced = false;
+    replace_char_with_next_cyclic_char(var, var.length() - 1, has_replaced);
 
-    if (find(next_vars.begin(),
-             next_vars.end(),
-             tolower(last_char)) != next_vars.end())
+    if (!has_replaced)
     {
-        int index = tolower(last_char) - 'a';
-        replace_char_with_next_cyclic_char(var, pos, index);
-    }
-    else
-    {
-        // If variable has more than two characters, try to increment (cyclically)
-        // the second to last character.
-        int pos = var.length() - 2;
-        char second_last_char = var[pos];
-
-        if (find(next_vars.begin(),
-                 next_vars.end(),
-                 tolower(second_last_char)) != next_vars.end())
-        {
-            int index = tolower(second_last_char) - 'a';
-            replace_char_with_next_cyclic_char(var, pos, index);
-        }
+        replace_char_with_next_cyclic_char(var, var.length() - 2, has_replaced);
     }
 
     return var;

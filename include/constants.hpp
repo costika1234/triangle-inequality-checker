@@ -2,7 +2,6 @@
 #define constants_hpp
 
 #include <string>
-#include <vector>
 
 using namespace std;
 
@@ -19,6 +18,5 @@ const string INDENT = string(12, ' ');
 const string MEMBER_FUNC_PTR_KEY = "__POINTERS_TO_MEMBER_FUNCTIONS__";
 const string TRIANGLE_ELEM_MAP_KEY = "__MAP_OF_TRIANGLE_ELEMENTS_TO_POINTERS__";
 const char DELIMITER = '_';
-const vector<char> next_vars = { 'b', 'c', 'a' };
 
 #endif /* constants_hpp */
