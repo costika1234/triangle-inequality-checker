@@ -23,9 +23,9 @@ void Triangle::init_angles()
     cosB = (c * c + a * a - b * b) / (2 * c * a);
     cosC = (a * a + b * b - c * c) / (2 * a * b);
 
-    A = acos(cosA) * 180 / M_PI;
-    B = acos(cosB) * 180 / M_PI;
-    C = acos(cosC) * 180 / M_PI;
+    A = acos(cosA);
+    B = acos(cosB);
+    C = acos(cosC);
 }
 
 void Triangle::init_Rrs()
@@ -165,12 +165,7 @@ void Triangle::init_cotA4_cotB4_cotC4()
 
 tuple_3 Triangle::get_trig_func_of_nA_nB_nC(trig_func func, long_d n)
 {
-    long_d angle_ct = n * M_PI / 180;
-    long_d func_nA = func(A * angle_ct);
-    long_d func_nB = func(B * angle_ct);
-    long_d func_nC = func(C * angle_ct);
-
-    return tuple<long_d ,long_d, long_d>(func_nA, func_nB, func_nC);
+    return tuple<long_d ,long_d, long_d>(func(n * A), func(n * B), func(n * C));
 }
 
 void Triangle::init_K()
@@ -339,7 +334,13 @@ void Triangle::init_FA_FB_FC()
 
 ostream& operator<<(ostream& os, const Triangle& tr)
 {
-    os << "|     Angles: (" << tr.A << "º, " << tr.B << "º, " << tr.C << "º)" << endl
-       << "|     Sides:  (" << tr.a << ", "  << tr.b << ", "  << tr.c << ")"  << endl;
+    os << "|     Angles: (" << convert_radians_to_degrees(tr.A) << "º, " 
+                            << convert_radians_to_degrees(tr.B) << "º, " 
+                            << convert_radians_to_degrees(tr.C) << "º)" 
+                            << endl
+       << "|     Sides:  (" << tr.a << ", "  
+                            << tr.b << ", "  
+                            << tr.c << ")"  
+                            << endl;
     return os;
 }

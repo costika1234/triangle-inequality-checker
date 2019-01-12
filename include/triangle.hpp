@@ -21,7 +21,7 @@ public:
     // Sides.
     long_d a, b, c;
 
-    // Angles.
+    // Angles in radians.
     long_d A, B, C;
 
     // Fundamental elements.

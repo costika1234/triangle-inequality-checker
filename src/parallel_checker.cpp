@@ -112,11 +112,14 @@ void ParallelChecker::display_stats()
                                                                        << Color::FG_WHITE << expanded_RHS
                                                                        << Color::FG_DEFAULT << endl
          << "|" << endl
-         << "|" << Color::FG_LIGHT_MAGENTA << " Subject to:          " << Color::FG_WHITE   << min_angle
-                                                                       << " <= A, B, C <= " << max_angle
+         << "|" << Color::FG_LIGHT_MAGENTA << " Subject to:          " << Color::FG_WHITE   
+                                                                       << convert_radians_to_degrees(min_angle)
+                                                                       << " <= A, B, C <= " 
+                                                                       << convert_radians_to_degrees(max_angle)
                                                                        << Color::FG_DEFAULT << endl
          << "|"                            << "                      " << Color::FG_WHITE << "max{A, B, C} >= "
-                                                                       << phi_angle << Color::FG_DEFAULT << endl;
+                                                                       << convert_radians_to_degrees(phi_angle) 
+                                                                       << Color::FG_DEFAULT << endl;
 
     if (display_min_max_triangles)
     {
@@ -148,7 +151,8 @@ void ParallelChecker::display_stats()
                                         << "%" << Color::FG_DEFAULT << endl
          << "|" << endl;
     cout << "|" << Color::FG_GREEN << " Holds for angles in range:     ["
-                                   << finalStats.min_angle_holds << "º, " << finalStats.max_angle_holds << "º]"
+                                   << convert_radians_to_degrees(finalStats.min_angle_holds) << "º, "
+                                   << convert_radians_to_degrees(finalStats.max_angle_holds) << "º]"
                                    << Color::FG_DEFAULT << endl;
     cout << "|" << Color::FG_GREEN << " Holds for t = R / r in range:  ["
                                    << finalStats.min_t << ", "  << finalStats.max_t << "]"

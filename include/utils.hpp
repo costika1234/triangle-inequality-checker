@@ -243,4 +243,14 @@ static void expand_cyclic_products(string& inequality)
     inequality = regex_replace_with_callback(inequality, regex(REGEX_CYCLIC_PROD), &expand_prod_expr);
 }
 
+static long_d convert_radians_to_degrees(long_d angle_in_radians)
+{
+    return angle_in_radians * 180 / M_PI;
+}
+
+static long_d convert_degrees_to_radians(long_d angle_in_degrees)
+{
+    return angle_in_degrees * M_PI / 180;
+}
+
 #endif /* utils_hpp */

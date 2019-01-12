@@ -25,9 +25,10 @@ int main(int argc, const char * argv[])
     
     if (argc == 4)
     {
-        min_angle = atof(argv[1]);
-        max_angle = atof(argv[2]); 
-        phi_angle = atof(argv[3]);
+        // For convenience, angles are expressed in degrees on the command line.
+        min_angle = convert_degrees_to_radians(atof(argv[1]));
+        max_angle = convert_degrees_to_radians(atof(argv[2]));
+        phi_angle = convert_degrees_to_radians(atof(argv[3]));
     }
 
     ParallelChecker parallel_checker(read_input("inequality.txt"), min_angle, max_angle, phi_angle);
