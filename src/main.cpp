@@ -31,10 +31,19 @@ int main(int argc, const char * argv[])
         phi_angle = convert_degrees_to_radians(atof(argv[3]));
     }
 
-    ParallelChecker parallel_checker(read_input("inequality.txt"), min_angle, max_angle, phi_angle);
-
-    parallel_checker.run();
-    parallel_checker.display_stats();
+    try
+    {
+        ParallelChecker parallel_checker(read_input("inequality.txt"), 
+                                         min_angle, 
+                                         max_angle, 
+                                         phi_angle);
+        parallel_checker.run();
+        parallel_checker.display_stats();
+    }
+    catch (const runtime_error& error)
+    {
+        cout << "ERROR! " << error.what() << endl;
+    }
 
     return 0;
 }

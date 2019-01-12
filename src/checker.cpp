@@ -5,12 +5,14 @@
 
 #define CALL_MEMBER_FN(object, ptrToMember)  ((object).*(ptrToMember))
 
-Checker::Checker(string _inequality,
+Checker::Checker(const string _expanded_LHS,
+                 const string _expanded_RHS,
                  long_d _min_angle,
                  long_d _max_angle,
                  long_d _phi_angle,
                  long_d _step)
-    : inequality(_inequality)
+    : expanded_LHS(_expanded_LHS)
+    , expanded_RHS(_expanded_RHS)
     , min_angle(_min_angle)
     , max_angle(_max_angle)
     , phi_angle(_phi_angle)
@@ -27,14 +29,6 @@ Checker::Checker(string _inequality,
 
 void Checker::init_funcs_and_parser()
 {
-    // Expand any cyclic sums/products.
-    expand_cyclic_sums(inequality);
-    expand_cyclic_products(inequality);
-
-    // Parse inequality and extract LHS and RHS.
-    auto sides = parse_inequality(inequality);
-    expanded_LHS = get<0>(sides);
-    expanded_RHS = get<1>(sides);
     auto all_vars = get_vars_from_inequality(expanded_LHS, expanded_RHS);
 
     TriangleInfo tr_info(&tr);

@@ -37,7 +37,6 @@ struct TriangleStats
 class Checker
 {
 private:
-    string       inequality;
     string       expanded_LHS, expanded_RHS;
     expression_t expression_LHS, expression_RHS;
 
@@ -80,7 +79,8 @@ private:
                             const TrElemPtrMap&  tr_elem_ptr_map);
 
 public:
-    Checker(string inequality,
+    Checker(const string expanded_LHS,
+            const string expanded_RHS,
             long_d _min_angle = 0,
             long_d _max_angle = 180,
             long_d _phi_angle = 0,

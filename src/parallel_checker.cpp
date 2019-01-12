@@ -24,9 +24,6 @@ TriangleStats ParallelChecker::get_stats()
 
 void ParallelChecker::run()
 {
-    expand_cyclic_sums(inequality);
-    expand_cyclic_products(inequality);
-
     auto sides = parse_inequality(inequality);
     expanded_LHS = get<0>(sides);
     expanded_RHS = get<1>(sides);
@@ -35,9 +32,19 @@ void ParallelChecker::run()
 
     for (int i = 0; i < no_partitions; ++i)
     {
-        checkers.push_back(new Checker(inequality, min_angle, max_angle, phi_angle, step));
-        futures.push_back(async(launch::async, &Checker::run_range, checkers[i],
-                                partitions[i][0], partitions[i][1], partitions[i][2], partitions[i][3]));
+        checkers.push_back(new Checker(expanded_LHS, 
+                                       expanded_RHS, 
+                                       min_angle, 
+                                       max_angle, 
+                                       phi_angle, 
+                                       step));
+        futures.push_back(async(launch::async, 
+                                &Checker::run_range, 
+                                checkers[i],
+                                partitions[i][0], 
+                                partitions[i][1], 
+                                partitions[i][2], 
+                                partitions[i][3]));
     }
 
     for (auto& future : futures)
