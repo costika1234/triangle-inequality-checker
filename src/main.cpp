@@ -26,7 +26,7 @@ int main(int argc, const char * argv[])
     }
 
     long_d min_angle = 0.0;
-    long_d max_angle = 180.0;
+    long_d max_angle = M_PI;
     long_d phi_angle = 0.0;
 
     if (argc == 4)
