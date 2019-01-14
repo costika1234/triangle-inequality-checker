@@ -2,19 +2,21 @@
 
 #include "parallel_checker.hpp"
 
-ParallelChecker::ParallelChecker(string inequality,
-                                 long_d min_angle,
-                                 long_d max_angle,
-                                 long_d phi_angle,
-                                 long_d step)
-    : inequality(inequality)
-    , min_angle(min_angle)
-    , max_angle(max_angle)
-    , phi_angle(phi_angle)
-    , step(step)
-    , finalStats(TriangleStats(phi_angle, max_angle))
+ParallelChecker::ParallelChecker(string _inequality,
+                                 vector<string> _constraints,
+                                 long_d _min_angle,
+                                 long_d _max_angle,
+                                 long_d _phi_angle,
+                                 long_d _step)
+    : inequality(_inequality)
+    , constraints(_constraints)
+    , min_angle(_min_angle)
+    , max_angle(_max_angle)
+    , phi_angle(_phi_angle)
+    , step(_step)
+    , finalStats(TriangleStats(_phi_angle, _max_angle))
 {
-
+    no_constraints = _constraints.size();
 }
 
 TriangleStats ParallelChecker::get_stats()
@@ -25,25 +27,34 @@ TriangleStats ParallelChecker::get_stats()
 void ParallelChecker::run()
 {
     auto sides = parse_inequality(inequality);
-    expanded_LHS = get<0>(sides);
-    expanded_RHS = get<1>(sides);
+    inequality_LHS = get<0>(sides);
+    inequality_RHS = get<1>(sides);
+
+    for (auto constraint : constraints)
+    {
+        sides = parse_inequality(constraint);
+        constraints_LHS.push_back(get<0>(sides));
+        constraints_RHS.push_back(get<1>(sides));
+    }
 
     futures.reserve(no_partitions);
 
     for (int i = 0; i < no_partitions; ++i)
     {
-        checkers.push_back(new Checker(expanded_LHS, 
-                                       expanded_RHS, 
-                                       min_angle, 
-                                       max_angle, 
-                                       phi_angle, 
+        checkers.push_back(new Checker(inequality_LHS,
+                                       inequality_RHS,
+                                       constraints_LHS,
+                                       constraints_RHS,
+                                       min_angle,
+                                       max_angle,
+                                       phi_angle,
                                        step));
-        futures.push_back(async(launch::async, 
-                                &Checker::run_range, 
+        futures.push_back(async(launch::async,
+                                &Checker::run_range,
                                 checkers[i],
-                                partitions[i][0], 
-                                partitions[i][1], 
-                                partitions[i][2], 
+                                partitions[i][0],
+                                partitions[i][1],
+                                partitions[i][2],
                                 partitions[i][3]));
     }
 
@@ -106,7 +117,7 @@ void ParallelChecker::aggregate_stats()
 
 void ParallelChecker::display_stats()
 {
-    int underscore_length = 30 + string(expanded_LHS).length() + string(expanded_RHS).length();
+    int underscore_length = 30 + string(inequality_LHS).length() + string(inequality_RHS).length();
     underscore_length = max(underscore_length, 65);
     string underscore_str = string(underscore_length, '_');
     PrintUtils::set_precision(cout, VERY_LOW_PRECISION);
@@ -114,19 +125,29 @@ void ParallelChecker::display_stats()
     cout << PrintUtils::bold_on
          << " " + underscore_str << endl
          << "|" << endl
-         << "|" << Color::FG_LIGHT_MAGENTA << " Checking inequality: " << Color::FG_WHITE << expanded_LHS
+         << "|" << Color::FG_LIGHT_MAGENTA << " Checking inequality: " << Color::FG_WHITE << inequality_LHS
                                                                        << Color::FG_LIGHT_RED << " <= "
-                                                                       << Color::FG_WHITE << expanded_RHS
+                                                                       << Color::FG_WHITE << inequality_RHS
                                                                        << Color::FG_DEFAULT << endl
          << "|" << endl
-         << "|" << Color::FG_LIGHT_MAGENTA << " Subject to:          " << Color::FG_WHITE   
-                                                                       << convert_radians_to_degrees(min_angle)
-                                                                       << " <= A, B, C <= " 
-                                                                       << convert_radians_to_degrees(max_angle)
+         << "|" << Color::FG_LIGHT_MAGENTA << " Subject to:          " << Color::FG_WHITE << convert_radians_to_degrees(min_angle)
+                                                                       << Color::FG_LIGHT_RED << " <= "
+                                                                       << Color::FG_WHITE << "A, B, C"
+                                                                       << Color::FG_LIGHT_RED << " <= "
+                                                                       << Color::FG_WHITE << convert_radians_to_degrees(max_angle)
                                                                        << Color::FG_DEFAULT << endl
-         << "|"                            << "                      " << Color::FG_WHITE << "max{A, B, C} >= "
-                                                                       << convert_radians_to_degrees(phi_angle) 
+         << "|"                            << "                      " << Color::FG_WHITE << "max{A, B, C}"
+                                                                       << Color::FG_LIGHT_RED << " >= "
+                                                                       << Color::FG_WHITE << convert_radians_to_degrees(phi_angle)
                                                                        << Color::FG_DEFAULT << endl;
+
+    for (int i = 0; i < no_constraints; ++i)
+    {
+        cout << "|                      " << Color::FG_WHITE     << constraints_LHS[i]
+                                          << Color::FG_LIGHT_RED << " <= "
+                                          << Color::FG_WHITE     << constraints_RHS[i]
+                                          << Color::FG_DEFAULT   << endl;
+    }
 
     if (display_min_max_triangles)
     {
@@ -171,4 +192,3 @@ void ParallelChecker::display_stats()
          << "|" + underscore_str << endl
          << PrintUtils::bold_off;
 }
-

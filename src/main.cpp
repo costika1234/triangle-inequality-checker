@@ -2,14 +2,20 @@
 
 using namespace std;
 
-const string read_input(const string& filename)
+const pair<string, vector<string>> read_input(const string& filename)
 {
-    string inequality;
     ifstream f(filename);
-    getline(f, inequality);
-    f.close();
+    string inequality;
+    vector<string> constraints;
 
-    return inequality;
+    getline(f, inequality);
+
+    for (string line; getline(f, line);)
+    {
+        constraints.push_back(line);
+    }
+
+    return { inequality, constraints };
 }
 
 int main(int argc, const char * argv[])
@@ -22,7 +28,7 @@ int main(int argc, const char * argv[])
     long_d min_angle = 0.0;
     long_d max_angle = 180.0;
     long_d phi_angle = 0.0;
-    
+
     if (argc == 4)
     {
         // For convenience, angles are expressed in degrees on the command line.
@@ -33,9 +39,11 @@ int main(int argc, const char * argv[])
 
     try
     {
-        ParallelChecker parallel_checker(read_input("inequality.txt"), 
-                                         min_angle, 
-                                         max_angle, 
+        auto input = read_input("inequality.txt");
+        ParallelChecker parallel_checker(input.first,
+                                         input.second,
+                                         min_angle,
+                                         max_angle,
                                          phi_angle);
         parallel_checker.run();
         parallel_checker.display_stats();

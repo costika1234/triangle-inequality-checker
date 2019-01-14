@@ -37,8 +37,14 @@ struct TriangleStats
 class Checker
 {
 private:
-    string       expanded_LHS, expanded_RHS;
-    expression_t expression_LHS, expression_RHS;
+    string        inequality_LHS, inequality_RHS;
+    expression_t  inequality_expr_LHS, inequality_expr_RHS;
+
+    vector<string>        constraints_LHS, constraints_RHS;
+    vector<expression_t>  constraints_expr_LHS, constraints_expr_RHS;
+
+    // Number of constraints.
+    int no_constraints;
 
     // min_angle <= min{A, B, C}.
     long_d min_angle;
@@ -67,24 +73,34 @@ private:
     // Triangle instance.
     Triangle tr;
 
-    // The necessary subset of triangle init functions to be called.
-    TrFuncPtrVec required_init_funcs;
+    // The necessary subset of triangle init functions to be called for both
+    // the given inequality and constraints.
+    TrFuncPtrVec         inequality_init_funcs;
+    vector<TrFuncPtrVec> constraints_init_funcs;
 
     static bool is_triangle(long_d a, long_d b, long_d c);
 
-    void init_funcs_and_parser();
+    void init_funcs_and_parser(const string&  LHS,
+                               const string&  RHS,
+                               expression_t&  expr_LHS,
+                               expression_t&  expr_RHS,
+                               TrFuncPtrVec&  init_funcs);
 
     void init_exprtk_parser(const string&        inequality_side,
                             expression_t&        expression,
                             const TrElemPtrMap&  tr_elem_ptr_map);
 
+    void call_member_functions(const TrFuncPtrVec init_funcs);
+
 public:
-    Checker(const string expanded_LHS,
-            const string expanded_RHS,
-            long_d _min_angle = 0,
-            long_d _max_angle = 180,
-            long_d _phi_angle = 0,
-            long_d _step      = 0.1);
+    Checker(const string         inequality_LHS,
+            const string         inequality_RHS,
+            const vector<string> constraints_LHS,
+            const vector<string> constraints_RHS,
+            long_d min_angle = 0,
+            long_d max_angle = 180,
+            long_d phi_angle = 0,
+            long_d step      = 0.1);
 
     TriangleStats get_stats() const;
 

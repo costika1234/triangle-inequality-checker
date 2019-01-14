@@ -5,14 +5,18 @@
 
 #define CALL_MEMBER_FN(object, ptrToMember)  ((object).*(ptrToMember))
 
-Checker::Checker(const string _expanded_LHS,
-                 const string _expanded_RHS,
+Checker::Checker(const string _inequality_LHS,
+                 const string _inequality_RHS,
+                 const vector<string> _constraints_LHS,
+                 const vector<string> _constraints_RHS,
                  long_d _min_angle,
                  long_d _max_angle,
                  long_d _phi_angle,
                  long_d _step)
-    : expanded_LHS(_expanded_LHS)
-    , expanded_RHS(_expanded_RHS)
+    : inequality_LHS(_inequality_LHS)
+    , inequality_RHS(_inequality_RHS)
+    , constraints_LHS(_constraints_LHS)
+    , constraints_RHS(_constraints_RHS)
     , min_angle(_min_angle)
     , max_angle(_max_angle)
     , phi_angle(_phi_angle)
@@ -22,25 +26,49 @@ Checker::Checker(const string _expanded_LHS,
 {
     assert(min_angle <= min(phi_angle, max_angle) && phi_angle <= max_angle);
 
-    // Initialize the required init functions to be called during the checker
-    // run and set up the exprtk parser.
-    init_funcs_and_parser();
+    // Initialize the necessary init functions to be called during the checker
+    // run and set up the exprtk parser for both the inequality and constraints.
+    init_funcs_and_parser(inequality_LHS,
+                          inequality_RHS,
+                          inequality_expr_LHS,
+                          inequality_expr_RHS,
+                          inequality_init_funcs);
+
+    no_constraints = constraints_LHS.size();
+
+    constraints_expr_LHS.resize(no_constraints);
+    constraints_expr_RHS.resize(no_constraints);
+    constraints_init_funcs.resize(no_constraints);
+
+    for (int i = 0; i < no_constraints; ++i)
+    {
+        init_funcs_and_parser(constraints_LHS[i],
+                              constraints_RHS[i],
+                              constraints_expr_LHS[i],
+                              constraints_expr_RHS[i],
+                              constraints_init_funcs[i]);
+    }
 }
 
-void Checker::init_funcs_and_parser()
-{
-    auto all_vars = get_vars_from_inequality(expanded_LHS, expanded_RHS);
+void Checker::init_funcs_and_parser(const string&  LHS,
+                                    const string&  RHS,
+                                    expression_t&  expr_LHS,
+                                    expression_t&  expr_RHS,
+                                    TrFuncPtrVec&  init_funcs)
 
+{
+    auto vars = get_vars_from_inequality(LHS, RHS);
     TriangleInfo tr_info(&tr);
     set<int> func_indices;
     const TrElemPtrMap tr_elem_ptr_map = tr_info.get_tr_elem_ptr_map();
     const TrFuncPtrVec tr_func_ptr_vec = tr_info.get_tr_func_ptr_vec();
 
-    for (auto var : all_vars)
+    for (auto var : vars)
     {
-        if (tr_elem_ptr_map.find(var) == tr_elem_ptr_map.end()) {
+        if (tr_elem_ptr_map.find(var) == tr_elem_ptr_map.end())
+        {
             ostringstream exit_message;
-            exit_message << "Variable '" << var 
+            exit_message << "Variable '" << var
                          << "' is undefined in triangle-inequality-checker." << endl;
             throw runtime_error(exit_message.str());
         }
@@ -52,11 +80,11 @@ void Checker::init_funcs_and_parser()
 
     for (auto index : func_indices)
     {
-        required_init_funcs.push_back(tr_func_ptr_vec[index]);
+        init_funcs.push_back(tr_func_ptr_vec[index]);
     }
 
-    init_exprtk_parser(expanded_LHS, expression_LHS, tr_elem_ptr_map);
-    init_exprtk_parser(expanded_RHS, expression_RHS, tr_elem_ptr_map);
+    init_exprtk_parser(LHS, expr_LHS, tr_elem_ptr_map);
+    init_exprtk_parser(RHS, expr_RHS, tr_elem_ptr_map);
 }
 
 void Checker::init_exprtk_parser(const string&       inequality_side,
@@ -75,6 +103,14 @@ void Checker::init_exprtk_parser(const string&       inequality_side,
 
     expression.register_symbol_table(symbol_table);
     parser.compile(inequality_side, expression);
+}
+
+void Checker::call_member_functions(const TrFuncPtrVec init_funcs)
+{
+    for (auto& init_func : init_funcs)
+    {
+        CALL_MEMBER_FN(tr, init_func)();
+    }
 }
 
 void Checker::run_range(long_d b_start, long_d b_end, long_d c_start, long_d c_end)
@@ -115,15 +151,29 @@ void Checker::run_range(long_d b_start, long_d b_end, long_d c_start, long_d c_e
                 continue;
             }
 
-            // Call only the necessary methods to initialize the triangle elements.
-            for (auto& init_func : required_init_funcs)
+            // Check constraints.
+            bool allConstraintsHold = true;
+            for (int i = 0; i < no_constraints; ++i)
             {
-                CALL_MEMBER_FN(tr, init_func) ();
+                call_member_functions(constraints_init_funcs[i]);
+                if (constraints_expr_LHS[i].value() > constraints_expr_RHS[i].value())
+                {
+                    allConstraintsHold = false;
+                    break;
+                }
             }
 
+            if (!allConstraintsHold)
+            {
+                continue;
+            }
+
+            // Call only the necessary methods to initialize the triangle elements.
+            call_member_functions(inequality_init_funcs);
+
             long_d t = tr.R / tr.r;
-            long_d LHS = expression_LHS.value();
-            long_d RHS = expression_RHS.value();
+            long_d LHS = inequality_expr_LHS.value();
+            long_d RHS = inequality_expr_RHS.value();
 
             stats.min_LHS = min(stats.min_LHS, LHS);
             stats.max_RHS = max(stats.max_RHS, RHS);
