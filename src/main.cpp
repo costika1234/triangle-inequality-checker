@@ -1,22 +1,4 @@
-#include "parallel_checker.hpp"
-
-using namespace std;
-
-const pair<string, vector<string>> read_input(const string& filename)
-{
-    ifstream f(filename);
-    string inequality;
-    vector<string> constraints;
-
-    getline(f, inequality);
-
-    for (string line; getline(f, line);)
-    {
-        constraints.push_back(line);
-    }
-
-    return { inequality, constraints };
-}
+#include "input_reader.hpp"
 
 int main(int argc, const char * argv[])
 {
@@ -39,9 +21,10 @@ int main(int argc, const char * argv[])
 
     try
     {
-        auto input = read_input("inequality.txt");
-        ParallelChecker parallel_checker(input.first,
-                                         input.second,
+        auto input = read_input();
+        ParallelChecker parallel_checker(get<0>(input),
+                                         get<1>(input),
+                                         get<2>(input),
                                          min_angle,
                                          max_angle,
                                          phi_angle);

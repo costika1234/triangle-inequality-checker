@@ -1,3 +1,11 @@
-[sum ha^2 / mb^2] >= 3.0
+// Checking inequality involving cyclical sum.
+[sum sinA2] >= x / 2 + sqrt(y)
+
+// Substitutions.
+x = 1 + u
+y = 1 - u
+u = sqrt(1 - 2 * r / R)
+
+// Additional constraints.
 a >= b
 b >= c

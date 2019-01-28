@@ -2,14 +2,16 @@
 
 #include "parallel_checker.hpp"
 
-ParallelChecker::ParallelChecker(string _inequality,
-                                 vector<string> _constraints,
-                                 long_d _min_angle,
-                                 long_d _max_angle,
-                                 long_d _phi_angle,
-                                 long_d _step)
+ParallelChecker::ParallelChecker(string          _inequality,
+                                 vector<string>  _constraints,
+                                 vector<string>  _substitutions,
+                                 long_d          _min_angle,
+                                 long_d          _max_angle,
+                                 long_d          _phi_angle,
+                                 long_d          _step)
     : inequality(_inequality)
     , constraints(_constraints)
+    , substitutions(_substitutions)
     , min_angle(_min_angle)
     , max_angle(_max_angle)
     , phi_angle(_phi_angle)
@@ -26,13 +28,13 @@ TriangleStats ParallelChecker::get_stats()
 
 void ParallelChecker::run()
 {
-    auto sides = parse_inequality(inequality);
+    auto sides = parse_inequality(inequality, substitutions);
     inequality_LHS = get<0>(sides);
     inequality_RHS = get<1>(sides);
 
     for (auto constraint : constraints)
     {
-        sides = parse_inequality(constraint);
+        sides = parse_inequality(constraint, substitutions);
         constraints_LHS.push_back(get<0>(sides));
         constraints_RHS.push_back(get<1>(sides));
     }

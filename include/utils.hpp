@@ -112,11 +112,11 @@ static bool is_matching_brackets(string s)
 static bool is_distance_between_remarkable_points(const string& match)
 {
     if (match.length() == 2)
-    { 
+    {
         regex remarkable_distance_regex(REGEX_REMARKABLE_DIST);
         return sregex_iterator(match.begin(), match.end(), remarkable_distance_regex) != sregex_iterator();
     }
-    
+
     return false;
 }
 
@@ -211,8 +211,16 @@ static void expand_cyclic_products(string& inequality)
     inequality = regex_replace_with_callback(inequality, regex(REGEX_CYCLIC_PROD), &expand_prod_expr);
 }
 
-static pair<string, string> parse_inequality(string& inequality)
+static void replace(string& str, const string& key, const string& value)
 {
+    str = std::regex_replace(str, std::regex(key), value);
+}
+
+static pair<string, string> parse_inequality(string& inequality,
+                                             const vector<string>& substitutions)
+{
+    // Assumes that both the inequality and substitutions are well defined (all
+    // expressions match the appropriate regexes).
     if (!is_matching_brackets(inequality))
     {
         throw runtime_error("Invalid input: check brackets parity");
@@ -223,10 +231,10 @@ static pair<string, string> parse_inequality(string& inequality)
 
     string LHS, RHS;
 
-    regex re(REGEX_LHS_LEQ_RHS);
+    regex  re(REGEX_LHS_LEQ_RHS);
     smatch match;
 
-    if (regex_search(inequality, match, re) && match.size() > 1)
+    if (regex_search(inequality, match, re))
     {
         LHS = match.str(1);
         RHS = match.str(2);
@@ -234,14 +242,14 @@ static pair<string, string> parse_inequality(string& inequality)
     else
     {
         regex re(REGEX_LHS_GEQ_RHS);
-        if (regex_search(inequality, match, re) && match.size() > 1)
+        if (regex_search(inequality, match, re))
         {
             LHS = match.str(2);
             RHS = match.str(1);
         }
         else
         {
-            throw runtime_error("Invalid input: missing either '<=' or '>='!");
+            throw runtime_error("Invalid input: inequality is missing either '<=' or '>='!");
         }
     }
 
@@ -253,7 +261,49 @@ static pair<string, string> parse_inequality(string& inequality)
         throw runtime_error("Invalid input: either LHS or RHS is empty!");
     }
 
+    for (auto it = substitutions.begin(); it != substitutions.end(); ++it)
+    {
+        regex  re(REGEX_LHS_EQ_RHS);
+        smatch match;
+
+        regex_search(*it, match, re);
+
+        string key   = match.str(1);
+        string value = match.str(2);
+
+        trim(key);
+        trim(value);
+
+        // Add brackets to preserve the meaning of the expression.
+        replace(LHS, key, "(" + value + ")");
+        replace(RHS, key, "(" + value + ")");
+    }
+
     return pair<string, string>(LHS, RHS);
+}
+
+static bool is_matching_regex(const string& expr, const string& regex_str)
+{
+    regex  re(regex_str);
+    smatch match;
+
+    return (regex_search(expr, match, re) && match.size() > 1);
+}
+
+static bool is_constraint(const string& expr)
+{
+    return is_matching_regex(expr, REGEX_LHS_LEQ_RHS) ||
+           is_matching_regex(expr, REGEX_LHS_GEQ_RHS);
+}
+
+static bool is_substitution(const string& expr)
+{
+    return is_matching_regex(expr, REGEX_LHS_EQ_RHS);
+}
+
+static bool is_comment_or_empty_line(const string &line)
+{
+    return line == "" || line.compare(0, 2, COMMENT_STR) == 0;
 }
 
 static long_d convert_radians_to_degrees(long_d angle_in_radians)

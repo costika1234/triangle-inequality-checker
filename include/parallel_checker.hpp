@@ -16,6 +16,8 @@ private:
     vector<string> constraints;
     vector<string> constraints_LHS, constraints_RHS;
 
+    vector<string> substitutions;
+
     // Number of constraints.
     int no_constraints;
 
@@ -57,8 +59,9 @@ private:
     void aggregate_stats();
 
 public:
-    ParallelChecker(string inequality,
-                    vector<string> constraints,
+    ParallelChecker(string             inequality,
+                    vector<string>     constraints,
+                    vector<string>     substitutions,
                     long_d min_angle = 0.0,
                     long_d max_angle = 180.0,
                     long_d phi_angle = 0.0,
