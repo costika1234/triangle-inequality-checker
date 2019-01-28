@@ -9,8 +9,8 @@
 string get_triangle_elem_key_value(const string& elem, const string& triangle_class_field, int pos)
 {
     ostringstream triangle_elem_key_value;
-    triangle_elem_key_value << "{ \"" << elem 
-                            << "\", { &tr->" << triangle_class_field 
+    triangle_elem_key_value << "{ \"" << elem
+                            << "\", { &tr->" << triangle_class_field
                             << ", " << pos << " } }"
                             << "," << endl << INDENT;
 
@@ -54,12 +54,12 @@ pair<string, string> generate_triangle_info()
                 member_elems_map << get_triangle_elem_key_value(var, var, pos);
                 // When dealing with remarkable points, add a new entry in the map with a reversed
                 // key, but pointing to the same triangle class field ('var').
-                if (is_distance_between_remarkable_points(var)) 
+                if (is_distance_between_remarkable_points(var))
                 {
                     ostringstream reversed_var;
                     reversed_var << var[1] << var[0];
                     member_elems_map << get_triangle_elem_key_value(reversed_var.str(), var, pos);
-                } 
+                }
             }
 
             member_elems_map << endl << INDENT;
@@ -85,13 +85,8 @@ int main(int argc, const char * argv[])
     string triangle_info_cpp = template_stream.str();
 
     auto triangle_info = generate_triangle_info();
-
-    triangle_info_cpp = regex_replace(triangle_info_cpp,
-                                      regex(MEMBER_FUNC_PTR_KEY),
-                                      triangle_info.first);
-    triangle_info_cpp = regex_replace(triangle_info_cpp,
-                                      regex(TRIANGLE_ELEM_MAP_KEY),
-                                      triangle_info.second);
+    replace(triangle_info_cpp, MEMBER_FUNC_PTR_KEY, triangle_info.first);
+    replace(triangle_info_cpp, TRIANGLE_ELEM_MAP_KEY, triangle_info.second);
 
     out << triangle_info_cpp;
 

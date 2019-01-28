@@ -175,30 +175,28 @@ static string get_next_var(const smatch& m)
     return var;
 }
 
+static string bracketify(const string& str)
+{
+    return "(" + str + ")";
+}
+
 static string expand_cyclic_expr(const smatch& m, const string& op)
 {
     string e1 = m.str(1);
     string e2 = regex_replace_with_callback(e1, regex(REGEX_TRIANGLE_VAR), &get_next_var);
     string e3 = regex_replace_with_callback(e2, regex(REGEX_TRIANGLE_VAR), &get_next_var);
 
-    ostringstream cyclic_sum;
-    cyclic_sum << "("
-               << "(" << e1 << ") " << op << " "
-               << "(" << e2 << ") " << op << " "
-               << "(" << e3 << ")"
-               << ")";
-
-    return cyclic_sum.str();
+    return bracketify(bracketify(e1) + op + bracketify(e2) + op + bracketify(e3));
 }
 
 static string expand_sum_expr(const smatch& m)
 {
-    return expand_cyclic_expr(m, "+");
+    return expand_cyclic_expr(m, " + ");
 }
 
 static string expand_prod_expr(const smatch& m)
 {
-    return expand_cyclic_expr(m, "*");
+    return expand_cyclic_expr(m, " * ");
 }
 
 static void expand_cyclic_sums(string& inequality)
@@ -213,7 +211,7 @@ static void expand_cyclic_products(string& inequality)
 
 static void replace(string& str, const string& key, const string& value)
 {
-    str = std::regex_replace(str, std::regex(key), value);
+    str = regex_replace(str, regex(key), value);
 }
 
 static pair<string, string> parse_inequality(string& inequality,
@@ -274,9 +272,15 @@ static pair<string, string> parse_inequality(string& inequality,
         trim(key);
         trim(value);
 
-        // Add brackets to preserve the meaning of the expression.
-        replace(LHS, key, "(" + value + ")");
-        replace(RHS, key, "(" + value + ")");
+        // Add brackets to preserve the meaning of the expression unless
+        // dealing with an arbitrary point 'P' (e.g. PA -> IA if P = I).
+        if (key != "P")
+        {
+            value = bracketify(value);
+        }
+
+        replace(LHS, key, value);
+        replace(RHS, key, value);
     }
 
     return pair<string, string>(LHS, RHS);
