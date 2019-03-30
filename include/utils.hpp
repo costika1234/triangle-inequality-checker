@@ -272,6 +272,10 @@ static pair<string, string> parse_inequality(string& inequality,
         trim(key);
         trim(value);
 
+        // 'value' might contain cyclic sums or products which need expanding.
+        expand_cyclic_sums(value);
+        expand_cyclic_products(value);
+
         // Add brackets to preserve the meaning of the expression unless
         // dealing with an arbitrary point 'P' (e.g. PA -> IA if P = I).
         if (key != "P")
@@ -308,6 +312,11 @@ static bool is_substitution(const string& expr)
 static bool is_comment_or_empty_line(const string &line)
 {
     return line == "" || line.compare(0, 2, COMMENT_STR) == 0;
+}
+
+static bool is_end_of_input_delimiter(const string &line)
+{
+    return line.compare(0, 3, END_OF_INPUT_DELIMITER) == 0;
 }
 
 static long_d convert_radians_to_degrees(long_d angle_in_radians)

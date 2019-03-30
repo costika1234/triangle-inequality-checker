@@ -22,6 +22,13 @@ static const tuple<string, vector<string>, vector<string>> read_input()
             continue;
         }
 
+        // Disregard anything after '---' (to allow for saving other results
+        // to the same file that do not belong to the inequality in question).
+        if (is_end_of_input_delimiter(line))
+        {
+            break;
+        }
+
         if (is_constraint(line))
         {
             constraints.push_back(line);
