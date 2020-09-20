@@ -191,6 +191,6 @@ void ParallelChecker::display_stats()
          << "|" << Color::FG_WHITE << " PASSED: "
                                    << finalStats.passed_rate
                                    << "%" << Color::FG_DEFAULT << endl
-         << "|" + underscore_str << endl
+         << "|" + underscore_str << endl << endl
          << PrintUtils::bold_off;
 }
